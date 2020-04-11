@@ -1,5 +1,11 @@
-const noteController = require('./note.controller');
+const userController = require('./user.controller');
+const adminController = require('./admin.controller');
+const productController = require('./product.controller');
+const categoryController = require('./category.controller');
 
 module.exports = {
-  noteController,
+  userController,
+  adminController,
+  productController,
+  categoryController,
 };

@@ -5,7 +5,7 @@ const helmet = require('helmet');
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 
-const SwaggerDocument = require('./swagger/swagger.js');
+// const SwaggerDocument = require('./swagger/swagger.js');
 const config = require('./config');
 const apiRoutes = require('./routes');
 const errorUtils = require('./utils/error');
@@ -21,11 +21,11 @@ app.get('/', (req, res) => {
 });
 
 // setup swagger
-app.use('/swagger', swaggerUi.serve, swaggerUi.setup(SwaggerDocument({
-  microserviceIp: config.MICROSERVICE_IP,
-  microservicePort: config.SWAGGER_PORT,
-  microserviceName: config.MICROSERVICE_NAME,
-})));
+// app.use('/swagger', swaggerUi.serve, swaggerUi.setup(SwaggerDocument({
+//   microserviceIp: config.MICROSERVICE_IP,
+//   microservicePort: config.SWAGGER_PORT,
+//   microserviceName: config.MICROSERVICE_NAME,
+// })));
 
 // use routes
 app.use(apiRoutes);

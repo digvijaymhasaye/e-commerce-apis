@@ -1,5 +1,7 @@
-const note = require('./note.model');
+const product = require('./product.model');
+const category = require('./category.model');
 
 module.exports = {
-  note,
+  product,
+  category,
 };

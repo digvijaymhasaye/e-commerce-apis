@@ -1,5 +1,9 @@
-const noteService = require('./note.service');
+const userService = require('./user.service');
+const productService = require('./product.service');
+const categoryService = require('./category.service');
 
 module.exports = {
-  noteService,
+  userService,
+  productService,
+  categoryService,
 };
