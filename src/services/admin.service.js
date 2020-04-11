@@ -33,7 +33,7 @@ const findByMobileNo = async (mobileNo) => {
 
 /**
  * Sign-in admin into system
- * @param {*} param0 
+ * @param {*} param0
  */
 const signIn = async ({ mobile_no, password }) => {
   const user = await findByMobileNo(mobile_no);
@@ -111,4 +111,3 @@ module.exports = {
   changePassword,
   resetPassword,
 };
-

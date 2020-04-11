@@ -1,5 +1,5 @@
-const parameters = require('./../../parameters');
-const responses = require('./../../responses');
+const parameters = require('../../parameters');
+const responses = require('../../responses');
 
 const notePaths = {
 

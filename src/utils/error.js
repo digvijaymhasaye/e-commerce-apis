@@ -56,12 +56,12 @@ const handler = (error, req, res, next) => {
           message: error.message,
         });
       break;
-    case 'MulterError': 
+    case 'MulterError':
       return res.status(400)
         .send({
           status: STATUS_CODE.BAD_REQUEST,
           message: error.message,
-        })
+        });
     default:
       return res.status(STATUS_CODE.ERROR)
         .send({
@@ -94,13 +94,13 @@ const throwForbiddenError = (message) => {
   const error = new Error(message);
   error.name = 'Forbidden';
   throw error;
-}
+};
 
 const throwUnAuthorisedError = (message) => {
   const error = new Error(message);
   error.name = 'Unauthorized';
   throw error;
-}
+};
 
 module.exports = {
   handler,

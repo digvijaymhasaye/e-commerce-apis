@@ -9,7 +9,7 @@
 //   if (!user) {
 //     const error = new Error('User not found');
 //     error.name = 'NotFound';
-//     throw error; 
+//     throw error;
 //   }
 
 //   return user;
@@ -23,7 +23,7 @@
 //   if (!user) {
 //     const error = new Error('User not found');
 //     error.name = 'NotFound';
-//     throw error; 
+//     throw error;
 //   }
 
 //   return user;
@@ -31,7 +31,7 @@
 
 // /**
 //  * Sign-in admin into system
-//  * @param {*} param0 
+//  * @param {*} param0
 //  */
 // const signIn = async ({ mobile_no, password }) => {
 //   const user = await findByMobileNo(mobile_no);
@@ -59,7 +59,7 @@
 
 // /**
 //  * Create new admin
-//  * @param {*} param0 
+//  * @param {*} param0
 //  */
 // const createAdmin = async({
 //   full_name, email_id, mobile_no, type, requested_by,
@@ -108,4 +108,3 @@
 //   changePassword,
 //   resetPassword,
 // };
-

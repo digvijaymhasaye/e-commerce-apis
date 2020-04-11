@@ -18,8 +18,6 @@ const verify = async ({ token }) => {
     error.name = 'Unauthorised';
     throw error;
   }
-
-  
 };
 
 module.exports = {
