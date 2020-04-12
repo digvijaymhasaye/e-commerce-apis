@@ -1,8 +1,9 @@
 const { Op } = require('sequelize');
 const {
   ProductModel, CategoryModel, OfferModel, CouponModel,
+  ImageModel,
 } = require('../managers').sequelizeManager;
-const { STATUS } = require('../consts');
+const { STATUS, TYPE } = require('../consts');
 const { getOne: getCategory } = require('./category.service');
 
 const getListCount = async ({
@@ -55,7 +56,12 @@ const getList = async ({
     };
   }
 
-  const include = [];
+  const include = [{
+    model: ImageModel,
+    where: {
+      type: TYPE.IMAGE_TYPE.PRODUCT,
+    },
+  }];
 
   if (include_category) {
     include.push({

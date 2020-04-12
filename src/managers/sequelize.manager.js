@@ -2,6 +2,8 @@ const Sequelize = require('sequelize');
 const {
   product,
   category,
+  offer,
+  image,
 } = require('../models');
 const config = require('../config');
 
@@ -26,9 +28,28 @@ sequelize.sync();
 
 const ProductModel = product(sequelize, Sequelize);
 const CategoryModel = category(sequelize, Sequelize);
+const OfferModel = offer(sequelize, Sequelize);
+const ImageModel = image(sequelize, Sequelize);
+
+CategoryModel.hasMany(ProductModel, { foreignKey: 'category_id' });
+ProductModel.belongsTo(CategoryModel, { foreignKey: 'category_id' });
+
+OfferModel.hasOne(ProductModel, { foreignKey: 'type_id' });
+ProductModel.belongsTo(OfferModel, { foreignKey: 'type_id' });
+
+ProductModel.hasMany(ImageModel, { foreignKey: 'type_id' });
+ImageModel.belongsTo(ProductModel, { foreignKey: 'type_id' });
+
+CategoryModel.hasMany(ImageModel, { foreignKey: 'type_id' });
+ImageModel.belongsTo(CategoryModel, { foreignKey: 'type_id' });
+
+OfferModel.hasMany(ImageModel, { foreignKey: 'type_id' });
+ImageModel.belongsTo(OfferModel, { foreignKey: 'type_id' });
 
 module.exports = {
   sequelize,
   ProductModel,
   CategoryModel,
+  OfferModel,
+  ImageModel,
 };

@@ -1,8 +1,8 @@
 const { Op } = require('sequelize');
 const {
-  ProductModel, CategoryModel, OfferModel, CouponModel,
+  ProductModel, CategoryModel, OfferModel, CouponModel, ImageModel,
 } = require('../managers').sequelizeManager;
-const { STATUS } = require('../consts');
+const { STATUS, TYPE } = require('../consts');
 
 const getListCount = async ({
   status, search, ids,
@@ -57,9 +57,16 @@ const getList = async ({
   const order = [];
   order.push([sort_by, sort_order]);
 
+  const include = [{
+    model: ImageModel,
+    where: {
+      type: TYPE.IMAGE_TYPE.CATEGORY,
+    },
+  }];
 
   return CategoryModel.findAll({
     where,
+    include,
     order,
     offset,
     limit,
@@ -70,6 +77,12 @@ const getOne = async ({ id }) => {
   const category = await CategoryModel.findOne({
     where: {
       id,
+    },
+    include: {
+      model: ImageModel,
+      where: {
+        type: TYPE.IMAGE_TYPE.CATEGORY,
+      },
     },
   });
 
