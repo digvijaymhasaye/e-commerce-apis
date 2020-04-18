@@ -58,6 +58,7 @@ const getList = async ({
 
   const include = [{
     model: ImageModel,
+    through: [],
     where: {
       type: TYPE.IMAGE_TYPE.PRODUCT,
     },
