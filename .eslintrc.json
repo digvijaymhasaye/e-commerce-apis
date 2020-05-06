@@ -14,6 +14,11 @@
                 "no-unused-expressions": "off",
                 "camelcase": "off"
             }
+        }, {
+            "files": "*.js",
+            "rules": {
+                "no-console": "off"
+            }
         }
     ],
     "globals": {

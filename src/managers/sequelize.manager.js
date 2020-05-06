@@ -5,6 +5,10 @@ const {
   offer,
   image,
   productImageMap,
+  coupon,
+  couponAudienceMap,
+  userGroupUserMap,
+  userGroup,
 } = require('../models');
 const config = require('../config');
 
@@ -32,6 +36,10 @@ const CategoryModel = category(sequelize, Sequelize);
 const OfferModel = offer(sequelize, Sequelize);
 const ImageModel = image(sequelize, Sequelize);
 const ProductImageMapModel = productImageMap(sequelize, Sequelize);
+const CouponModel = coupon(sequelize, Sequelize);
+const CouponAudienceModel = couponAudienceMap(sequelize, Sequelize);
+const UserGroupUserMapModel = userGroupUserMap(sequelize, Sequelize);
+const UserGroupModel = userGroup(sequelize, Sequelize);
 
 CategoryModel.hasMany(ProductModel, { foreignKey: 'category_id' });
 ProductModel.belongsTo(CategoryModel, { foreignKey: 'category_id' });
@@ -48,6 +56,15 @@ ImageModel.belongsTo(CategoryModel, { foreignKey: 'type_id' });
 OfferModel.hasMany(ImageModel, { foreignKey: 'type_id' });
 ImageModel.belongsTo(OfferModel, { foreignKey: 'type_id' });
 
+CouponModel.hasOne(CouponAudienceModel, { foreignKey: 'coupon_id' });
+CouponAudienceModel.belongsTo(CouponModel, { foreignKey: 'coupon_id' });
+
+CouponAudienceModel.hasMany(UserGroupModel, { foreignKey: 'type_id' });
+UserGroupModel.belongsTo(CouponAudienceModel, { foreignKey: 'type_id' });
+
+// UserGroupModel.belongsToMany(UserModel, { through: UserGroupUserMapModel, foreignKey: 'user_group_id' });
+// UserModel.belongsToMany(UserGroupModel, { through: UserGroupUserMapModel, foreignKey: 'user_id' });
+
 module.exports = {
   sequelize,
   ProductModel,
@@ -55,4 +72,8 @@ module.exports = {
   OfferModel,
   ImageModel,
   ProductImageMapModel,
+  CouponModel,
+  CouponAudienceModel,
+  UserGroupUserMapModel,
+  UserGroupModel,
 };

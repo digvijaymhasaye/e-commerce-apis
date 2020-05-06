@@ -10,6 +10,7 @@ const STATUS_CODE = {
   ERROR: 500,
 };
 
+// eslint-disable-next-line no-unused-vars
 const handler = (error, req, res, next) => {
   console.error('ERROR UTILS >', error);
   const errorName = error.name;
@@ -20,42 +21,36 @@ const handler = (error, req, res, next) => {
           status: STATUS_CODE.BAD_REQUEST,
           message: error.message || 'Bad request',
         });
-      break;
     case 'NotFound':
       return res.status(STATUS_CODE.NOT_FOUND)
         .send({
           status: STATUS_CODE.NOT_FOUND,
           message: error.message,
         });
-      break;
     case 'Conflict':
       return res.status(STATUS_CODE.CONFLICT)
         .send({
           status: STATUS_CODE.CONFLICT,
           message: error.message,
         });
-      break;
     case 'Forbidden':
       return res.status(STATUS_CODE.FORBIDDEN)
         .send({
           status: STATUS_CODE.FORBIDDEN,
           message: error.message,
         });
-      break;
     case 'Unauthorized':
       return res.status(STATUS_CODE.UNAUTHORISED)
         .send({
           status: STATUS_CODE.UNAUTHORISED,
           message: error.message,
         });
-      break;
     case 'PreconditionFailed':
       return res.status(STATUS_CODE.PRECONDITION_FAILED)
         .send({
           status: STATUS_CODE.PRECONDITION_FAILED,
           message: error.message,
         });
-      break;
     case 'MulterError':
       return res.status(400)
         .send({
@@ -68,7 +63,6 @@ const handler = (error, req, res, next) => {
           status: STATUS_CODE.ERROR,
           message: 'Internal server error',
         });
-      break;
   }
 };
 

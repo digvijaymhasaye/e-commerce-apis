@@ -1,5 +1,6 @@
 // const bcrypt = require('bcrypt');
-// const { UserModel } = require('../models');
+const { UserDetailModel, ImageModel, AddressModel } = require('../managers').sequelizeManager;
+const { TYPE } = require('../consts');
 
 // const findById = async (_id) => {
 //   const user = await UserModel.findOne({
@@ -101,10 +102,40 @@
 
 // };
 
-// module.exports = {
-//   signIn,
-//   createAdmin,
-//   getDetails,
-//   changePassword,
-//   resetPassword,
-// };
+const getOne = async ({ id, include_address }) => {
+  const include = [{
+    model: ImageModel,
+    where: {
+      type: TYPE.IMAGE_TYPE.USER,
+    },
+  }];
+
+  if (include_address) {
+    include.push({
+      model: AddressModel,
+    });
+  }
+  const user = await UserDetailModel.findOne({
+    where: {
+      id,
+    },
+    include,
+  });
+
+  if (!user) {
+    const error = new Error('User not found');
+    error.name = 'NotFound';
+    throw error;
+  }
+
+  return user;
+};
+
+module.exports = {
+  // signIn,
+  // createAdmin,
+  // getDetails,
+  // changePassword,
+  // resetPassword,
+  getOne,
+};

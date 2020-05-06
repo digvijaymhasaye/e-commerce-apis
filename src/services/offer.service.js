@@ -1,5 +1,7 @@
 const { Op } = require('sequelize');
-const { OfferModel, ImageModel } = require('../managers').sequelizeManager;
+const {
+  OfferModel, ImageModel, ProductModel,
+} = require('../managers').sequelizeManager;
 const { STATUS, TYPE } = require('../consts');
 
 const getListCount = async ({
@@ -106,12 +108,21 @@ const getOne = async ({ id }) => {
         [Op.gte]: new Date(),
       },
     },
-    include: {
+    include: [{
       model: ImageModel,
       where: {
         type: TYPE.IMAGE_TYPE.OFFER,
       },
-    },
+    }, {
+      model: ProductModel,
+      where: {
+        type: TYPE.OFFER_TYPE.PRODUCT,
+      },
+      include: {
+        model: ImageModel,
+        through: [],
+      },
+    }],
   });
 
 

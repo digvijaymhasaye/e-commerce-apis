@@ -102,6 +102,15 @@ const getOne = async ({ id }) => {
     where: {
       id,
     },
+    include: [{
+      model: ImageModel,
+      through: [],
+      where: {
+        type: TYPE.IMAGE_TYPE.PRODUCT,
+      },
+    }, {
+      model: CategoryModel,
+    }],
   });
 
   if (!product) {
