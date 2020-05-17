@@ -6,16 +6,20 @@ module.exports = (sequelize, Sequelize) => sequelize.define('image', {
     primaryKey: true,
     autoIncrement: true,
   },
+  account_id: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+  },
   type: {
     type: Sequelize.TINYINT(1),
     allowNull: false,
     defaultValue: 0,
   },
-  type_id: {
-    type: Sequelize.INTEGER,
-    allowNull: false,
-    defaultValue: 0,
-  },
+  // type_id: {
+  //   type: Sequelize.INTEGER,
+  //   allowNull: false,
+  //   defaultValue: 0,
+  // },
   description: {
     type: Sequelize.STRING(255),
   },

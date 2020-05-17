@@ -20,11 +20,11 @@ module.exports = (sequelize, Sequelize) => sequelize.define('coupon_audience_map
     allowNull: true,
   },
   start_date: {
-    type: Sequelize.Date,
+    type: Sequelize.DATE,
     allowNull: false,
   },
   end_date: {
-    type: Sequelize.Date,
+    type: Sequelize.DATE,
     allowNull: false,
   },
   percentile: {

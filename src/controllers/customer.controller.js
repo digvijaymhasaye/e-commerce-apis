@@ -1,6 +1,6 @@
 const { successUtils } = require('../utils');
 const {
-  getId, getListValidation, userSignInValidation, addUserValidation, // updateNoteValidation,
+  getId, getListValidation, // signInValidation, addUserValidation, updateNoteValidation,
 } = require('../validations');
 const { userService } = require('../services');
 
@@ -47,33 +47,31 @@ const getOne = async (req, res, next) => {
   }
 };
 
-const signIn = async (req, res, next) => {
-  const reqBody = req.body;
-  try {
-    const validatedReqData = await userSignInValidation.validate(reqBody);
-    const user = await userService.signIn({
-      account_id: req.headers['account-id'],
-      ...validatedReqData,
-    });
-    return successUtils.handler({ user }, req, res);
-  } catch (err) {
-    return next(err);
-  }
-};
+// const signIn = async (req, res, next) => {
+//   const reqBody = req.body;
+//   try {
+//     const validatedReqData = await signInValidation.validate(reqBody);
+//     const user = await userService.addOne({
+//       ...validatedReqData,
+//     });
+//     return successUtils.handler({ user }, req, res);
+//   } catch (err) {
+//     return next(err);
+//   }
+// };
 
-const signUp = async (req, res, next) => {
-  const reqBody = req.body;
-  try {
-    const validatedReqData = await addUserValidation.validate(reqBody);
-    const user = await userService.addOne({
-      account_id: req.headers['account-id'],
-      ...validatedReqData,
-    });
-    return successUtils.handler({ user }, req, res);
-  } catch (err) {
-    return next(err);
-  }
-};
+// const signUp = async (req, res, next) => {
+//   const reqBody = req.body;
+//   try {
+//     const validatedReqData = await addUserValidation.validate(reqBody);
+//     const user = await userService.addOne({
+//       ...validatedReqData,
+//     });
+//     return successUtils.handler({ user }, req, res);
+//   } catch (err) {
+//     return next(err);
+//   }
+// };
 
 // const updateOne = async (req, res, next) => {
 //   const { userId } = req.params;
@@ -108,8 +106,8 @@ module.exports = {
   // getListCount,
   // getList,
   getOne,
-  signIn,
-  signUp,
+  // signIn,
+  // signUp,
   // updateOne,
   // deleteOne,
 };

@@ -1,0 +1,390 @@
+openapi: 3.0.0
+info:
+  title: Inventory Management API
+  version: '1.0'
+  contact:
+    name: Digvijay Mhasaye
+    url: colons.in
+    email: digvijaymhasaye8@gmail.com
+servers:
+  - url: 'http://localhost:8080'
+    description: Local
+paths:
+  /users/sign-in:
+    parameters: []
+    post:
+      summary: User Sign In
+      operationId: post-users-sign-in
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserWithAuthResponse'
+      tags:
+        - Users
+      description: This API will sign in user into the system
+      parameters:
+        - schema:
+            type: integer
+          in: header
+          name: account-id
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserSignInRequestBody'
+      security: []
+  /products:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductsResponse'
+      operationId: get-products
+      parameters:
+        - schema:
+            type: integer
+            default: 1
+            minimum: 1
+          in: header
+          name: account-id
+          required: true
+  /products/count:
+    get:
+      summary: Get Products count
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountResponse'
+      operationId: get-products-count
+      parameters:
+        - schema:
+            type: integer
+          in: header
+          name: account-id
+          required: true
+      description: This API will return count of products
+  /categories:
+    get:
+      summary: Get category list
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoriesResponse'
+      operationId: get-categories
+      parameters:
+        - schema:
+            type: integer
+          in: header
+          name: account-id
+          required: true
+        - schema:
+            type: integer
+            default: 1
+          in: query
+          name: page_no
+        - schema:
+            type: integer
+            default: 10
+          in: query
+          name: page_size
+        - schema:
+            type: string
+            default: created_at
+          in: query
+          name: sort_by
+        - schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: desc
+          in: query
+          name: sort_order
+        - schema:
+            type: integer
+          in: query
+          name: status
+        - schema:
+            type: string
+          in: query
+          name: search
+      description: This API will return list of categories
+      tags:
+        - Categories
+  /categories/count:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountResponse'
+      operationId: get-categories-count
+      description: This API will return count of categories
+      parameters:
+        - schema:
+            type: integer
+            minimum: 1
+            default: 1
+          in: header
+          name: account-id
+          required: true
+  /users:
+    post:
+      summary: Add User
+      operationId: post-users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserWithAuthResponse'
+      tags:
+        - Users
+      description: This API will register new user into the system
+      parameters:
+        - schema:
+            type: integer
+          in: header
+          name: account-id
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddUserModel'
+components:
+  schemas:
+    UserSignInRequestBody:
+      title: UserSignInRequestBody
+      type: object
+      properties:
+        email_id:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+      required:
+        - email_id
+        - password
+    UserWithAuthResponse:
+      title: UserSignInResponseBody
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            user:
+              $ref: '#/components/schemas/UserDetailsWithAuth'
+    UserDetailsWithAuth:
+      title: UserDetailsWithoutAuth
+      type: object
+      properties:
+        id:
+          type: integer
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email_id:
+          type: string
+          format: email
+        mobile_no:
+          type: integer
+          maximum: 10
+        account_id:
+          type: integer
+          default: 1
+          minimum: 1
+        image_id:
+          type: integer
+          minimum: 1
+        token:
+          type: string
+        status:
+          type: integer
+          default: 1
+          enum:
+            - 0
+            - 1
+            - 2
+            - 3
+            - 4
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    ProductsResponse:
+      title: ProductsResponse
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            products:
+              type: array
+              items:
+                $ref: '#/components/schemas/ProductWithImagesDefinition'
+    ProductWithImagesDefinition:
+      title: ProductWithImagesDefinition
+      type: object
+      properties:
+        id:
+          type: integer
+        category_id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: string
+        quantity:
+          type: string
+        base_quantity:
+          type: string
+        unit:
+          type: string
+        status:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImageModel'
+    ImageModel:
+      title: ImageModel
+      type: object
+      properties:
+        id:
+          type: integer
+        account_id:
+          type: integer
+        type:
+          type: integer
+        description:
+          type: string
+        url:
+          type: string
+        size:
+          type: integer
+        uploaded_by:
+          type: integer
+        is_copy:
+          type: integer
+        status:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    CountResponse:
+      title: CountResponse
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            count:
+              type: integer
+    CategoryWithImageModel:
+      title: CategoryWithImageModel
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        account_id:
+          type: string
+        image_id:
+          type: string
+        status:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        image:
+          $ref: '#/components/schemas/ImageModel'
+    CategoriesResponse:
+      title: CategoriesResponse
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            categories:
+              type: array
+              items:
+                $ref: '#/components/schemas/CategoryWithImageModel'
+    AddUserModel:
+      title: AddUserModel
+      type: object
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email_id:
+          type: string
+          format: email
+        mobile_no:
+          type: integer
+          maximum: 10
+        account_id:
+          type: integer
+          default: 1
+          minimum: 1
+        image_id:
+          type: integer
+          default: 0
+        password:
+          type: string
+          format: password
+          minLength: 8
+          maxLength: 32
+      required:
+        - first_name
+        - last_name
+        - email_id
+        - mobile_no
+        - account_id
+        - password
+  securitySchemes:
+    Authorization:
+      type: http
+      scheme: bearer
+      description: ''
+security:
+  - Authorization: []

@@ -22,6 +22,12 @@ module.exports = (sequelize, Sequelize) => sequelize.define('product', {
     defaultValue: 0,
     allowNull: false,
   },
+  base_quantity: {
+    type: Sequelize.INTEGER,
+  },
+  unit: {
+    type: Sequelize.STRING(15),
+  },
   quantity: {
     type: Sequelize.INTEGER,
     defaultValue: -1,

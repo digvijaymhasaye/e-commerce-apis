@@ -1,6 +1,6 @@
 const { STATUS } = require('../consts');
 
-module.exports = (sequelize, Sequelize) => sequelize.define('category', {
+module.exports = (sequelize, Sequelize) => sequelize.define('notifications', {
   id: {
     type: Sequelize.INTEGER,
     primaryKey: true,
@@ -10,17 +10,23 @@ module.exports = (sequelize, Sequelize) => sequelize.define('category', {
     type: Sequelize.INTEGER,
     allowNull: false,
   },
-  image_id: {
+  type: {
     type: Sequelize.INTEGER,
-    allowNull: false,
-    defaultValue: 0,
   },
-  name: {
-    type: Sequelize.STRING(255),
-    allowNull: false,
+  audience_type: {
+    type: Sequelize.TINYINT(1),
   },
-  description: {
+  audience_type_id: {
+    type: Sequelize.INTEGER,
+  },
+  title: {
     type: Sequelize.STRING(255),
+  },
+  message: {
+    type: Sequelize.STRING(1000),
+  },
+  url: {
+    type: Sequelize.STRING(1000),
   },
   status: {
     type: Sequelize.TINYINT(1),

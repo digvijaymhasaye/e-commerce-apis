@@ -1,26 +1,22 @@
 const { STATUS } = require('../consts');
 
-module.exports = (sequelize, Sequelize) => sequelize.define('category', {
+module.exports = (sequelize, Sequelize) => sequelize.define('account', {
   id: {
     type: Sequelize.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   },
-  account_id: {
-    type: Sequelize.INTEGER,
-    allowNull: false,
-  },
-  image_id: {
-    type: Sequelize.INTEGER,
-    allowNull: false,
-    defaultValue: 0,
-  },
   name: {
-    type: Sequelize.STRING(255),
-    allowNull: false,
+    type: Sequelize.STRING('255'),
   },
   description: {
     type: Sequelize.STRING(255),
+  },
+  email_id: {
+    type: Sequelize.STRING(255),
+  },
+  mobile_no: {
+    type: Sequelize.INTEGER,
   },
   status: {
     type: Sequelize.TINYINT(1),

@@ -1,6 +1,6 @@
 const { STATUS } = require('../consts');
 
-module.exports = (sequelize, Sequelize) => sequelize.define('category', {
+module.exports = (sequelize, Sequelize) => sequelize.define('supplier', {
   id: {
     type: Sequelize.INTEGER,
     primaryKey: true,
@@ -10,17 +10,9 @@ module.exports = (sequelize, Sequelize) => sequelize.define('category', {
     type: Sequelize.INTEGER,
     allowNull: false,
   },
-  image_id: {
+  supplier_id: {
     type: Sequelize.INTEGER,
     allowNull: false,
-    defaultValue: 0,
-  },
-  name: {
-    type: Sequelize.STRING(255),
-    allowNull: false,
-  },
-  description: {
-    type: Sequelize.STRING(255),
   },
   status: {
     type: Sequelize.TINYINT(1),

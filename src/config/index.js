@@ -13,6 +13,7 @@ const config = {
   MYSQL_USERNAME: process.env.MYSQL_USERNAME || 'root',
   MYSQL_PASSWORD: process.env.MYSQL_PASSWORD || 'root',
   MYSQL_DB_NAME: process.env.MYSQL_DB_NAME || 'ims',
+  AUTH_KEY: process.env.AUTH_KEY,
 };
 
 module.exports = config;

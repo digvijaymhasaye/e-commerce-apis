@@ -9,6 +9,7 @@ const {
   couponAudienceMap,
   userGroupUserMap,
   userGroup,
+  user,
 } = require('../models');
 const config = require('../config');
 
@@ -40,12 +41,13 @@ const CouponModel = coupon(sequelize, Sequelize);
 const CouponAudienceModel = couponAudienceMap(sequelize, Sequelize);
 const UserGroupUserMapModel = userGroupUserMap(sequelize, Sequelize);
 const UserGroupModel = userGroup(sequelize, Sequelize);
+const UserModel = user(sequelize, Sequelize);
 
 CategoryModel.hasMany(ProductModel, { foreignKey: 'category_id' });
 ProductModel.belongsTo(CategoryModel, { foreignKey: 'category_id' });
 
-OfferModel.hasOne(ProductModel, { foreignKey: 'type_id' });
-ProductModel.belongsTo(OfferModel, { foreignKey: 'type_id' });
+// OfferModel.hasOne(ProductModel, { foreignKey: 'type_id' });
+// ProductModel.belongsTo(OfferModel, { foreignKey: 'type_id' });
 
 ProductModel.belongsToMany(ImageModel, { through: ProductImageMapModel, foreignKey: 'product_id' });
 ImageModel.belongsToMany(ProductModel, { through: ProductImageMapModel, foreignKey: 'image_id' });
@@ -76,4 +78,5 @@ module.exports = {
   CouponAudienceModel,
   UserGroupUserMapModel,
   UserGroupModel,
+  UserModel,
 };

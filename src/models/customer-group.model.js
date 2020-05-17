@@ -1,19 +1,10 @@
 const { STATUS } = require('../consts');
 
-module.exports = (sequelize, Sequelize) => sequelize.define('category', {
+module.exports = (sequelize, Sequelize) => sequelize.define('customer_group', {
   id: {
     type: Sequelize.INTEGER,
     primaryKey: true,
     autoIncrement: true,
-  },
-  account_id: {
-    type: Sequelize.INTEGER,
-    allowNull: false,
-  },
-  image_id: {
-    type: Sequelize.INTEGER,
-    allowNull: false,
-    defaultValue: 0,
   },
   name: {
     type: Sequelize.STRING(255),

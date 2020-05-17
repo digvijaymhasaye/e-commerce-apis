@@ -1,4 +1,6 @@
 const express = require('express');
+const { authoriser } = require('../middlewares');
+const userRoutes = require('./user.routes');
 const productRoutes = require('./product.routes');
 const categoryRoutes = require('./category.routes');
 const offerRoutes = require('./offer.routes');
@@ -7,9 +9,10 @@ const offerRoutes = require('./offer.routes');
 
 const apiRoutes = express.Router();
 
-apiRoutes.use('/products', productRoutes);
-apiRoutes.use('/categories', categoryRoutes);
-apiRoutes.use('/offers', offerRoutes);
+apiRoutes.use('/users', userRoutes);
+apiRoutes.use('/products', authoriser, productRoutes);
+apiRoutes.use('/categories', authoriser, categoryRoutes);
+apiRoutes.use('/offers', authoriser, offerRoutes);
 // apiRoutes.use('/banners', bannerRoutes);
 // apiRoutes.use('/images', imageRoutes);
 // apiRoutes.

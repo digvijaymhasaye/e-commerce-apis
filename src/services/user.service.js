@@ -1,6 +1,15 @@
-// const bcrypt = require('bcrypt');
-const { UserDetailModel, ImageModel, AddressModel } = require('../managers').sequelizeManager;
+const bcrypt = require('bcrypt');
+const {
+  UserModel,
+  UserDetailModel,
+  ImageModel,
+  AddressModel,
+} = require('../managers').sequelizeManager;
 const { TYPE } = require('../consts');
+const { errorUtils } = require('../utils');
+const { sign, verify } = require('./jwt.service');
+
+const SALT_ROUNDS = 10;
 
 // const findById = async (_id) => {
 //   const user = await UserModel.findOne({
@@ -16,79 +25,95 @@ const { TYPE } = require('../consts');
 //   return user;
 // };
 
-// const findByMobileNo = async (mobileNo) => {
-//   const user = await UserModel.findOne({
-//     mobile_no: mobileNo,
-//   });
+const findByEmailId = async (email_id) => {
+  const user = await UserModel.findOne({
+    where: {
+      email_id,
+    },
+  });
 
-//   if (!user) {
-//     const error = new Error('User not found');
-//     error.name = 'NotFound';
-//     throw error;
-//   }
+  if (!user) {
+    const error = new Error('User not found');
+    error.name = 'NotFound';
+    throw error;
+  }
 
-//   return user;
-// }
+  return user;
+};
 
-// /**
-//  * Sign-in admin into system
-//  * @param {*} param0
-//  */
-// const signIn = async ({ mobile_no, password }) => {
-//   const user = await findByMobileNo(mobile_no);
+/**
+ * Sign-in admin into system
+ * @param {*} param0
+ */
+const signIn = async ({ email_id, password }) => {
+  const user = await findByEmailId(email_id);
 
-//   const result = bcrypt.compareSync(password, user.hash);
+  const result = bcrypt.compareSync(password, user.hash);
 
-//   if (!result) {
-//     return errorUtils.throwForbiddenError('Invalid password');
-//   }
+  if (!result) {
+    return errorUtils.throwForbiddenError('Invalid password');
+  }
 
-//   const accessToken = createAccessToken(user);
+  user.type = 'user';
+  const accessToken = sign(user);
 
-//   const userWithoutPrivateDetails = {
-//     _id: user._id,
-//     full_name: user.full_name,
-//     email_id: user.email_id,
-//     mobile_no: user.mobile_no,
-//     type: user.type,
-//     token: accessToken,
-//   };
+  const userWithoutPrivateDetails = {
+    id: user.id,
+    first_name: user.first_name,
+    last_name: user.last_name,
+    email_id: user.email_id,
+    mobile_no: user.mobile_no,
+    account_id: user.account_id,
+    image_id: user.image_id,
+    token: accessToken,
+    status: user.status,
+    created_at: user.created_at,
+    updated_at: user.updated_at,
+  };
 
-//   return userWithoutPrivateDetails;
-// };
+  return userWithoutPrivateDetails;
+};
 
 
-// /**
-//  * Create new admin
-//  * @param {*} param0
-//  */
-// const createAdmin = async({
-//   full_name, email_id, mobile_no, type, requested_by,
-// }) => {
-//   const salt = bcrypt.genSaltSync(SALT_ROUNDS);
-//   const hash = bcrypt.hashSync(password, salt);
+/**
+ * Create new admin
+ * @param {*} param0
+ */
+const addOne = async ({
+  first_name, last_name, email_id, mobile_no, account_id, image_id, password,
+}) => {
+  const salt = bcrypt.genSaltSync(SALT_ROUNDS);
+  const hash = bcrypt.hashSync(password, salt);
+  console.log(mobile_no)
+  const user = await UserModel.create({
+    first_name,
+    last_name,
+    email_id,
+    mobile_no,
+    hash,
+    salt,
+    account_id,
+    image_id,
+  });
 
-//   const user = await UserModel.create({
-//     full_name,
-//     email,
-//     mobile_no,
-//     hash,
-//     salt,
-//     type,
-//     requested_by,
-//   });
+  user.type = 'user';
+  const accessToken = sign(user);
 
-//   const accessToken = createAccessToken(user);
-//   const userWithoutPrivateDetails = {
-//     token: accessToken,
-//     _id: user._id,
-//     full_name: user.full_name,
-//     email: user.email,
-//     mobile_no: user.mobile_no,
-//     type: user.type,
-//   };
-//   return userWithoutPrivateDetails;
-// };
+  const userWithoutPrivateDetails = {
+    id: user.id,
+    first_name: user.first_name,
+    last_name: user.last_name,
+    email_id: user.email_id,
+    mobile_no: user.mobile_no,
+    account_id: user.account_id,
+    image_id: user.image_id,
+    token: accessToken,
+    status: user.status,
+    created_at: user.created_at,
+    updated_at: user.updated_at,
+  };
+  return userWithoutPrivateDetails;
+};
 
 // const getDetails = async ({ user_id }) => {
 
@@ -102,7 +127,7 @@ const { TYPE } = require('../consts');
 
 // };
 
-const getOne = async ({ id, include_address }) => {
+const getOne = async ({ id }) => {
   const include = [{
     model: ImageModel,
     where: {
@@ -110,16 +135,10 @@ const getOne = async ({ id, include_address }) => {
     },
   }];
 
-  if (include_address) {
-    include.push({
-      model: AddressModel,
-    });
-  }
-  const user = await UserDetailModel.findOne({
+  const user = await UserModel.findOne({
     where: {
       id,
     },
-    include,
   });
 
   if (!user) {
@@ -132,8 +151,8 @@ const getOne = async ({ id, include_address }) => {
 };
 
 module.exports = {
-  // signIn,
-  // createAdmin,
+  signIn,
+  addOne,
   // getDetails,
   // changePassword,
   // resetPassword,

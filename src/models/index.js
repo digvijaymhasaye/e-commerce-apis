@@ -5,8 +5,9 @@ const image = require('./image.model');
 const productImageMap = require('./product-image-map.model');
 const coupon = require('./coupon.model');
 const couponAudienceMap = require('./coupon-audience-map.model');
-const userGroupUserMap = require('./user-group-user-map.model');
-const userGroup = require('./user-group.model');
+const userGroupUserMap = require('./customer-group-customer-map.model');
+const userGroup = require('./customer-group.model');
+const user = require('./user.model');
 
 module.exports = {
   product,
@@ -18,4 +19,5 @@ module.exports = {
   couponAudienceMap,
   userGroupUserMap,
   userGroup,
+  user,
 };

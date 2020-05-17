@@ -1,26 +1,17 @@
 const { STATUS } = require('../consts');
 
-module.exports = (sequelize, Sequelize) => sequelize.define('category', {
+module.exports = (sequelize, Sequelize) => sequelize.define('customer_wishlist_item', {
   id: {
     type: Sequelize.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   },
-  account_id: {
+  wishlist_id: {
     type: Sequelize.INTEGER,
     allowNull: false,
   },
-  image_id: {
+  product_id: {
     type: Sequelize.INTEGER,
-    allowNull: false,
-    defaultValue: 0,
-  },
-  name: {
-    type: Sequelize.STRING(255),
-    allowNull: false,
-  },
-  description: {
-    type: Sequelize.STRING(255),
   },
   status: {
     type: Sequelize.TINYINT(1),

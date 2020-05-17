@@ -14,11 +14,11 @@ module.exports = (sequelize, Sequelize) => sequelize.define('coupon', {
     type: Sequelize.STRING(255),
   },
   start_date: {
-    type: Sequelize.Date,
+    type: Sequelize.DATE,
     allowNull: false,
   },
   end_date: {
-    type: Sequelize.Date,
+    type: Sequelize.DATE,
     allowNull: false,
   },
   is_app_only: {
