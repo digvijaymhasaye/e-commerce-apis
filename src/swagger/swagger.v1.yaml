@@ -7,7 +7,7 @@ info:
     url: colons.in
     email: digvijaymhasaye8@gmail.com
 servers:
-  - url: 'http://localhost:8080'
+  - url: 'http://localhost:10010'
     description: Local
 paths:
   /users/sign-in:
