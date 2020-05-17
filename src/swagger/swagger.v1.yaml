@@ -9,6 +9,8 @@ info:
 servers:
   - url: 'http://localhost:10010'
     description: Local
+  - url: 'http://52.66.77.121:10010'
+    description: Dev
 paths:
   /users/sign-in:
     parameters: []

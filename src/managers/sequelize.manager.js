@@ -16,7 +16,7 @@ const config = require('../config');
 const sequelize = new Sequelize(config.MYSQL_DB_NAME, config.MYSQL_USERNAME, config.MYSQL_PASSWORD, {
   host: config.MYSQL_HOST,
   dialect: 'mysql',
-  logging: true,
+  logging: false,
   dialectOptions: {
     charset: 'utf8mb4',
   },
