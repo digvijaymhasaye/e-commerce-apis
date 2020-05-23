@@ -16,7 +16,7 @@ const config = require('../config');
 const sequelize = new Sequelize(config.MYSQL_DB_NAME, config.MYSQL_USERNAME, config.MYSQL_PASSWORD, {
   host: config.MYSQL_HOST,
   dialect: 'mysql',
-  logging: false,
+  logging: true,
   dialectOptions: {
     charset: 'utf8mb4',
   },
@@ -52,11 +52,11 @@ ProductModel.belongsTo(CategoryModel, { foreignKey: 'category_id' });
 ProductModel.belongsToMany(ImageModel, { through: ProductImageMapModel, foreignKey: 'product_id' });
 ImageModel.belongsToMany(ProductModel, { through: ProductImageMapModel, foreignKey: 'image_id' });
 
-CategoryModel.hasMany(ImageModel, { foreignKey: 'type_id' });
-ImageModel.belongsTo(CategoryModel, { foreignKey: 'type_id' });
+// CategoryModel.hasMany(ImageModel, { foreignKey: 'type_id' });
+// ImageModel.belongsTo(CategoryModel, { foreignKey: 'type_id' });
 
-OfferModel.hasMany(ImageModel, { foreignKey: 'type_id' });
-ImageModel.belongsTo(OfferModel, { foreignKey: 'type_id' });
+// OfferModel.hasMany(ImageModel, { foreignKey: 'type_id' });
+// ImageModel.belongsTo(OfferModel, { foreignKey: 'type_id' });
 
 CouponModel.hasOne(CouponAudienceModel, { foreignKey: 'coupon_id' });
 CouponAudienceModel.belongsTo(CouponModel, { foreignKey: 'coupon_id' });

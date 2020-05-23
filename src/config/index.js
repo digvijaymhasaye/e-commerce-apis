@@ -14,6 +14,9 @@ const config = {
   MYSQL_PASSWORD: process.env.MYSQL_PASSWORD || 'root',
   MYSQL_DB_NAME: process.env.MYSQL_DB_NAME || 'ims',
   AUTH_KEY: process.env.AUTH_KEY,
+  AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
+  AWS_SECRET_KEY_ID: process.env.AWS_SECRET_KEY_ID,
+  AWS_BUCKET_NAME: process.env.AWS_BUCKET_NAME,
 };
 
 module.exports = config;

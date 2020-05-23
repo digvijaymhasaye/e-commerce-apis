@@ -2,12 +2,12 @@ const { successUtils } = require('../utils');
 const {
   getListValidation, getId, addImageValidation,
 } = require('../validations');
-const { categoryService } = require('../services');
+const { imageService } = require('../services');
 
 const getListCount = async (req, res, next) => {
   try {
     const validatedReqData = await getListValidation.validate(req.query);
-    const count = await categoryService.getListCount({
+    const count = await imageService.getCount({
       ...validatedReqData,
     });
     return successUtils.handler({ count }, req, res);
@@ -23,7 +23,7 @@ const getList = async (req, res, next) => {
   }
   try {
     const validatedReqData = await getListValidation.validate(reqData);
-    const images = await categoryService.getList({
+    const images = await imageService.getList({
       ...validatedReqData,
     });
     return successUtils.handler({ images }, req, res);
@@ -36,7 +36,7 @@ const getOne = async (req, res, next) => {
   const { categoryId } = req.params;
   try {
     const id = await getId.validate(categoryId);
-    const image = await categoryService.getOne({
+    const image = await imageService.getOne({
       id,
     });
     return successUtils.handler({ image }, req, res);
@@ -48,11 +48,14 @@ const getOne = async (req, res, next) => {
 const addOne = async (req, res, next) => {
   const reqFile = req.file;
   const reqBody = req.body;
+  console.log(req.file);
   try {
     const validatedReqData = await addImageValidation.validate(reqBody);
-    const image = await categoryService.addOne({
+    const image = await imageService.addOne({
       ...validatedReqData,
-      ...reqFile,
+      file: reqFile,
+      account_id: req.headers.account_id,
+      user_id: req.headers.user_id,
     });
     return successUtils.handler({ image }, req, res);
   } catch (err) {
@@ -64,7 +67,7 @@ const deleteOne = async (req, res, next) => {
   const { categoryId } = req.params;
   try {
     const id = await getId.validate(categoryId);
-    const image = await categoryService.deleteOne({
+    const image = await imageService.deleteOne({
       id,
     });
     return successUtils.handler({ image }, req, res);

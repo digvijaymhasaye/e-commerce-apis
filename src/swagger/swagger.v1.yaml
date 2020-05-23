@@ -7,10 +7,10 @@ info:
     url: colons.in
     email: digvijaymhasaye8@gmail.com
 servers:
-  - url: 'http://localhost:10010'
-    description: Local
   - url: 'http://52.66.77.121:10010'
     description: Dev
+  - url: 'http://localhost:10010'
+    description: Local
 paths:
   /users/sign-in:
     parameters: []
@@ -42,7 +42,8 @@ paths:
   /products:
     get:
       summary: Your GET endpoint
-      tags: []
+      tags:
+        - Products
       responses:
         '200':
           description: OK
@@ -55,14 +56,87 @@ paths:
         - schema:
             type: integer
             default: 1
-            minimum: 1
           in: header
-          name: account-id
+          name: account_id
+          required: true
+        - schema:
+            type: integer
+            default: 1
+          in: header
+          name: user_id
+          required: true
+        - schema:
+            type: integer
+            default: 1
+          in: query
+          name: page_no
+        - schema:
+            type: integer
+            default: 10
+          in: query
+          name: page_size
+        - schema:
+            type: string
+            default: created_at
+          in: query
+          name: sort_by
+        - schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: desc
+          in: query
+          name: sort_order
+        - schema:
+            type: integer
+            enum:
+              - 0
+              - 1
+              - 2
+              - 3
+          in: query
+          name: status
+        - schema:
+            type: string
+          in: query
+          name: search
+    post:
+      summary: ''
+      operationId: post-products
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductResponse'
+      tags:
+        - Products
+      description: This API will add new product
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddUpdateProductModel'
+      parameters:
+        - schema:
+            type: integer
+            default: 1
+          in: header
+          name: account_id
+          required: true
+        - schema:
+            type: integer
+            default: 1
+          in: header
+          name: user_id
           required: true
   /products/count:
     get:
       summary: Get Products count
-      tags: []
+      tags:
+        - Products
       responses:
         '200':
           description: OK
@@ -74,8 +148,15 @@ paths:
       parameters:
         - schema:
             type: integer
+            default: 1
           in: header
-          name: account-id
+          name: account_id
+          required: true
+        - schema:
+            type: integer
+            default: 1
+          in: header
+          name: user_id
           required: true
       description: This API will return count of products
   /categories:
@@ -126,13 +207,57 @@ paths:
             type: string
           in: query
           name: search
+        - schema:
+            type: integer
+            default: 1
+          in: header
+          name: user_id
+          required: true
       description: This API will return list of categories
       tags:
         - Categories
+    post:
+      summary: ''
+      operationId: post-categories
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      category:
+                        $ref: '#/components/schemas/CategoryWithImageModel'
+      tags:
+        - Categories
+      description: This API will add new category
+      parameters:
+        - schema:
+            type: integer
+            default: 1
+          in: header
+          name: account_id
+          required: true
+        - schema:
+            type: integer
+            default: 1
+          in: header
+          name: user_id
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddCategoryModel'
   /categories/count:
     get:
       summary: Your GET endpoint
-      tags: []
+      tags:
+        - Categories
       responses:
         '200':
           description: OK
@@ -148,8 +273,28 @@ paths:
             minimum: 1
             default: 1
           in: header
-          name: account-id
+          name: account_id
           required: true
+        - schema:
+            type: integer
+            default: 1
+          in: header
+          name: user_id
+          required: true
+        - schema:
+            type: integer
+            enum:
+              - 0
+              - 1
+              - 2
+              - 3
+          in: query
+          name: status
+        - schema:
+            type: string
+            minLength: 3
+          in: query
+          name: search
   /users:
     post:
       summary: Add User
@@ -175,6 +320,376 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/AddUserModel'
+  /images:
+    post:
+      summary: ''
+      operationId: post-images
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddImageResponse'
+      tags:
+        - Images
+      description: This API will upload and add new image
+      parameters:
+        - schema:
+            type: integer
+            default: 1
+          in: header
+          name: account_id
+          required: true
+        - schema:
+            type: integer
+            default: 1
+          in: header
+          name: user_id
+          required: true
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+                type:
+                  type: integer
+                description:
+                  type: string
+                is_copy:
+                  type: integer
+                  default: 0
+                  enum:
+                    - 0
+                    - 1
+              required:
+                - image
+                - type
+            examples: {}
+        description: ''
+    get:
+      summary: ''
+      operationId: get-images
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetImagesResponse'
+      description: This API will return all uploaded images
+      parameters:
+        - schema:
+            type: integer
+            default: 1
+          in: header
+          name: account_id
+          required: true
+        - schema:
+            type: integer
+            default: 1
+          in: header
+          name: user_id
+          required: true
+        - schema:
+            type: integer
+            enum:
+              - 0
+              - 1
+              - 2
+              - 3
+              - 4
+          in: query
+          name: status
+        - schema:
+            type: string
+            minLength: 3
+          in: query
+          name: search
+        - schema:
+            type: integer
+            default: 1
+          in: query
+          name: page_no
+        - schema:
+            type: integer
+            default: 10
+          in: query
+          name: page_size
+        - schema:
+            type: string
+            default: created_at
+          in: query
+          name: sort_by
+        - schema:
+            type: string
+            default: desc
+            enum:
+              - asc
+              - desc
+          in: query
+          name: sort_order
+      tags:
+        - Images
+  /images/count:
+    get:
+      summary: Your GET endpoint
+      tags:
+        - Images
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountResponse'
+      operationId: get-images-count
+      description: This API will return total count of all images
+      parameters:
+        - schema:
+            type: integer
+            default: 1
+          in: header
+          name: account_id
+          required: true
+        - schema:
+            type: integer
+            default: 1
+          in: header
+          name: user_id
+          required: true
+        - schema:
+            type: integer
+            enum:
+              - 0
+              - 1
+              - 2
+              - 3
+              - 4
+          in: query
+          name: status
+        - schema:
+            type: string
+            minLength: 3
+          in: query
+          name: search
+  '/categories/{categoryId}':
+    parameters:
+      - schema:
+          type: integer
+          default: 1
+        name: categoryId
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - Categories
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      category:
+                        $ref: '#/components/schemas/CategoryWithImageModel'
+      operationId: get-categories-categoryId
+      description: This API will return category of given id
+      parameters:
+        - schema:
+            type: integer
+            default: 1
+          in: header
+          name: account_id
+          required: true
+        - schema:
+            type: integer
+            default: 1
+          in: header
+          name: user_id
+          required: true
+    put:
+      summary: ''
+      operationId: put-categories-categoryId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      category:
+                        $ref: '#/components/schemas/CategoryWithImageModel'
+      tags:
+        - Categories
+      description: This API will update category
+      parameters:
+        - schema:
+            type: integer
+            default: 1
+          in: header
+          name: account_id
+          required: true
+        - schema:
+            type: integer
+            default: 1
+          in: header
+          name: user_id
+          required: true
+        - schema:
+            type: integer
+            enum:
+              - 0
+              - 1
+          in: query
+          name: enable
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddCategoryModel'
+    delete:
+      summary: ''
+      operationId: delete-categories-categoryId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      category:
+                        $ref: '#/components/schemas/CategoryWithImageModel'
+      tags:
+        - Categories
+      description: This API will delete category of given id.
+      parameters:
+        - schema:
+            type: integer
+            default: 1
+          in: header
+          name: account_id
+          required: true
+        - schema:
+            type: integer
+            default: 1
+          in: header
+          name: user_id
+          required: true
+  '/products/{productId}':
+    parameters:
+      - schema:
+          type: string
+        name: productId
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - Products
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductResponse'
+      operationId: get-products-productId
+      description: This API will return product details
+      parameters:
+        - schema:
+            type: integer
+            default: 1
+          in: header
+          name: account_id
+          required: true
+        - schema:
+            type: integer
+            default: 1
+          in: header
+          name: user_id
+          required: true
+    put:
+      summary: ''
+      operationId: put-products-productId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductResponse'
+      tags:
+        - Products
+      description: This API will update product
+      parameters:
+        - schema:
+            type: integer
+            default: '1'
+          in: header
+          required: true
+          name: account_id
+        - schema:
+            type: integer
+            default: '1'
+          in: header
+          required: true
+          name: user_id
+        - schema:
+            type: integer
+            enum:
+              - 0
+              - 1
+          in: query
+          name: enable
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddUpdateProductModel'
+    delete:
+      summary: ''
+      operationId: delete-products-productId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductResponse'
+      tags:
+        - Products
+      description: This API will delete product
+      parameters:
+        - schema:
+            type: integer
+            default: 1
+          in: header
+          name: account_id
+          required: true
+        - schema:
+            type: integer
+            default: 1
+          in: header
+          name: user_id
+          required: true
 components:
   schemas:
     UserSignInRequestBody:
@@ -383,6 +898,75 @@ components:
         - mobile_no
         - account_id
         - password
+    AddImageResponse:
+      title: AddImageResponse
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            image:
+              $ref: '#/components/schemas/ImageModel'
+    GetImagesResponse:
+      title: GetImagesResponse
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            images:
+              type: array
+              items:
+                $ref: '#/components/schemas/ImageModel'
+    GetImageResponse:
+      title: GetImageResponse
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            image:
+              $ref: '#/components/schemas/ImageModel'
+    AddCategoryModel:
+      title: AddCategoryModel
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        image_id:
+          type: integer
+    ProductResponse:
+      title: ProductResponse
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            product:
+              $ref: '#/components/schemas/ProductWithImagesDefinition'
+    AddUpdateProductModel:
+      title: AddUpdateProductModel
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+          format: double
+        quantity:
+          type: integer
+        unit:
+          type: string
+        category_id:
+          type: integer
+        base_quantity:
+          type: integer
+        image_id:
+          type: integer
   securitySchemes:
     Authorization:
       type: http

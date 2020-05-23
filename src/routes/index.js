@@ -5,7 +5,7 @@ const productRoutes = require('./product.routes');
 const categoryRoutes = require('./category.routes');
 const offerRoutes = require('./offer.routes');
 // const bannerRoutes = require('./banner.routes.js');
-// const imageRoutes = require('./image.routes.js');
+const imageRoutes = require('./image.routes.js');
 
 const apiRoutes = express.Router();
 
@@ -14,7 +14,7 @@ apiRoutes.use('/products', authoriser, productRoutes);
 apiRoutes.use('/categories', authoriser, categoryRoutes);
 apiRoutes.use('/offers', authoriser, offerRoutes);
 // apiRoutes.use('/banners', bannerRoutes);
-// apiRoutes.use('/images', imageRoutes);
+apiRoutes.use('/images', imageRoutes);
 // apiRoutes.
 
 // apiRoutes.use('*', (req, res) => res.status(handlers.response.STATUS.NOT_FOUND)

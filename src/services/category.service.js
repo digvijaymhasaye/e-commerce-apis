@@ -1,13 +1,15 @@
 const { Op } = require('sequelize');
 const {
-  ProductModel, CategoryModel, OfferModel, CouponModel, ImageModel,
+  CategoryModel, ImageModel,
 } = require('../managers').sequelizeManager;
-const { STATUS, TYPE } = require('../consts');
+const { STATUS } = require('../consts');
 
 const getListCount = async ({
-  status, search, ids,
+  account_id, status, search, ids,
 }) => {
-  const where = {};
+  const where = {
+    account_id,
+  };
 
   if (status) {
     where.status = status;
@@ -31,12 +33,14 @@ const getListCount = async ({
 };
 
 const getList = async ({
-  page_no, page_size, sort_by, sort_order, status, search, ids,
+  account_id, page_no, page_size, sort_by, sort_order, status, search, ids,
 }) => {
   const limit = page_size;
   const offset = (page_no - 1) * limit;
 
-  const where = {};
+  const where = {
+    account_id,
+  };
 
   if (status) {
     where.status = status;
@@ -59,9 +63,6 @@ const getList = async ({
 
   const include = [{
     model: ImageModel,
-    where: {
-      type: TYPE.IMAGE_TYPE.CATEGORY,
-    },
   }];
 
   return CategoryModel.findAll({
@@ -73,17 +74,15 @@ const getList = async ({
   });
 };
 
-const getOne = async ({ id }) => {
+const getOne = async ({ id, account_id }) => {
   const category = await CategoryModel.findOne({
     where: {
       id,
+      account_id,
     },
-    include: {
-      model: ImageModel,
-      where: {
-        type: TYPE.IMAGE_TYPE.CATEGORY,
-      },
-    },
+    // include: {
+    //   model: ImageModel,
+    // },
   });
 
   // console.log(category);
@@ -97,13 +96,17 @@ const getOne = async ({ id }) => {
   return category;
 };
 
-const addOne = async ({ name, description }) => CategoryModel.create({
+const addOne = async ({
+  account_id, name, description, image_id,
+}) => CategoryModel.create({
+  account_id,
   name,
   description,
+  image_id,
 });
 
-const enableOne = async ({ id }) => {
-  const category = await getOne({ id });
+const enableOne = async ({ id, account_id }) => {
+  const category = await getOne({ id, account_id });
 
   if (category.status === STATUS.ENABLED) {
     const error = new Error('Category is already enabled');
@@ -115,8 +118,8 @@ const enableOne = async ({ id }) => {
   return category.save();
 };
 
-const disableOne = async ({ id }) => {
-  const category = await getOne({ id });
+const disableOne = async ({ id, account_id }) => {
+  const category = await getOne({ id, account_id });
 
   if (category.status === STATUS.DISABLED) {
     const error = new Error('Category is already disabled');
@@ -129,26 +132,27 @@ const disableOne = async ({ id }) => {
 };
 
 const updateOne = async ({
-  id, name, description, enable,
+  id, account_id, name, description, image_id, enable,
 }) => {
   if (enable !== undefined) {
     if (enable) {
-      return enableOne({ id });
+      return enableOne({ id, account_id });
     }
     if (!enable) {
-      return disableOne({ id });
+      return disableOne({ id, account_id });
     }
   }
 
-  const category = await getOne({ id });
+  const category = await getOne({ id, account_id });
 
   category.name = name || category.name;
   category.description = description || category.description;
+  category.image_id = image_id || category.image_id;
   return category.save();
 };
 
-const deleteOne = async ({ id }) => {
-  const category = await getOne({ id });
+const deleteOne = async ({ id, account_id }) => {
+  const category = await getOne({ id, account_id });
 
   if (category.status === STATUS.ENABLED) {
     const error = new Error('Category should be in disabled state to delete');

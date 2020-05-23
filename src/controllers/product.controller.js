@@ -8,6 +8,8 @@ const getListCount = async (req, res, next) => {
   try {
     const validatedReqData = await getListValidation.validate(req.query);
     const count = await productService.getListCount({
+      account_id: req.headers.account_id,
+      user_id: req.headers.user_id,
       ...validatedReqData,
     });
     return successUtils.handler({ count }, req, res);
@@ -24,6 +26,8 @@ const getList = async (req, res, next) => {
   try {
     const validatedReqData = await getListValidation.validate(reqData);
     const products = await productService.getList({
+      account_id: req.headers.account_id,
+      user_id: req.headers.user_id,
       ...validatedReqData,
     });
     return successUtils.handler({ products }, req, res);
@@ -38,6 +42,8 @@ const getOne = async (req, res, next) => {
     const id = await getId.validate(productId);
     const product = await productService.getOne({
       id,
+      account_id: req.headers.account_id,
+      user_id: req.headers.user_id,
     });
     return successUtils.handler({ product }, req, res);
   } catch (err) {
@@ -50,6 +56,8 @@ const addOne = async (req, res, next) => {
   try {
     const validatedReqData = await addProductValidation.validate(reqBody);
     const product = await productService.addOne({
+      account_id: req.headers.account_id,
+      user_id: req.headers.user_id,
       ...validatedReqData,
     });
     return successUtils.handler({ product }, req, res);
@@ -68,6 +76,8 @@ const updateOne = async (req, res, next) => {
     const validatedReqData = await updateProductValidation.validate({ enable, ...reqBody });
     const product = await productService.updateOne({
       id,
+      account_id: req.headers.account_id,
+      user_id: req.headers.user_id,
       ...validatedReqData,
     });
     return successUtils.handler({ product }, req, res);
@@ -82,6 +92,8 @@ const deleteOne = async (req, res, next) => {
     const id = await getId.validate(productId);
     const product = await productService.deleteOne({
       id,
+      account_id: req.headers.account_id,
+      user_id: req.headers.user_id,
     });
     return successUtils.handler({ product }, req, res);
   } catch (err) {

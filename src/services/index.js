@@ -3,6 +3,7 @@ const productService = require('./product.service');
 const categoryService = require('./category.service');
 const offerService = require('./offer.service');
 const jwtService = require('./jwt.service');
+const imageService = require('./image.service');
 
 module.exports = {
   userService,
@@ -10,4 +11,5 @@ module.exports = {
   categoryService,
   offerService,
   jwtService,
+  imageService,
 };

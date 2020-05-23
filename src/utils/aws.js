@@ -14,6 +14,7 @@ AWS.config.update({
 
 const upload = async ({ file_path, owner_id }) => {
   const fileBody = await fs.readFileSync(file_path);
+  console.log('File body = ', fileBody);
   const uploadedFile = await S3.upload({
     Key: `${owner_id}-${uuidV4}${path.extname(file_path)}`,
     Body: fileBody,

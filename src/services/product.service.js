@@ -1,15 +1,17 @@
 const { Op } = require('sequelize');
 const {
   ProductModel, CategoryModel, OfferModel, CouponModel,
-  ImageModel,
+  ImageModel, ProductImageMapModel,
 } = require('../managers').sequelizeManager;
-const { STATUS, TYPE } = require('../consts');
+const { STATUS } = require('../consts');
 const { getOne: getCategory } = require('./category.service');
 
 const getListCount = async ({
-  status, search, ids,
+  account_id, status, search, ids,
 }) => {
-  const where = {};
+  const where = {
+    account_id,
+  };
 
   if (status) {
     where.status = status;
@@ -33,12 +35,14 @@ const getListCount = async ({
 };
 
 const getList = async ({
-  page_no, page_size, sort_by, sort_order, status, search, ids, include_category, include_offer, include_coupons,
+  account_id, page_no, page_size, sort_by, sort_order, status, search, ids, include_category, include_offer, include_coupons,
 }) => {
   const limit = page_size;
   const offset = (page_no - 1) * limit;
 
-  const where = {};
+  const where = {
+    account_id,
+  };
 
   if (status) {
     where.status = status;
@@ -58,9 +62,8 @@ const getList = async ({
 
   const include = [{
     model: ImageModel,
-    through: [],
-    where: {
-      type: TYPE.IMAGE_TYPE.PRODUCT,
+    through: {
+      attributes: [],
     },
   }];
 
@@ -97,16 +100,16 @@ const getList = async ({
   });
 };
 
-const getOne = async ({ id }) => {
+const getOne = async ({ id, account_id }) => {
   const product = await ProductModel.findOne({
     where: {
       id,
+      account_id,
     },
     include: [{
       model: ImageModel,
-      through: [],
-      where: {
-        type: TYPE.IMAGE_TYPE.PRODUCT,
+      through: {
+        attributes: [],
       },
     }, {
       model: CategoryModel,
@@ -123,23 +126,32 @@ const getOne = async ({ id }) => {
 };
 
 const addOne = async ({
-  name, description, is_taxable, price, quantity, unit, category_id,
+  account_id, name, description, is_taxable, price, quantity, unit, category_id, base_quantity, image_id,
 }) => {
-  await getCategory({ id: category_id });
+  await getCategory({ id: category_id, account_id });
 
-  return ProductModel.create({
+  const product = await ProductModel.create({
+    account_id,
     name,
     description,
     price,
+    base_quantity,
     quantity,
     unit,
     category_id,
     is_taxable,
   });
+
+  await ProductImageMapModel.create({
+    image_id,
+    product_id: product.id,
+  });
+
+  return getOne({ id: product.id, account_id });
 };
 
-const enableOne = async ({ id }) => {
-  const product = await getOne({ id });
+const enableOne = async ({ id, account_id }) => {
+  const product = await getOne({ id, account_id });
 
   if (product.status === STATUS.ENABLED) {
     const error = new Error('Product is already enabled');
@@ -151,8 +163,8 @@ const enableOne = async ({ id }) => {
   return product.save();
 };
 
-const disableOne = async ({ id }) => {
-  const product = await getOne({ id });
+const disableOne = async ({ id, account_id }) => {
+  const product = await getOne({ id, account_id });
 
   if (product.status === STATUS.DISABLED) {
     const error = new Error('Product is already disabled');
@@ -165,31 +177,32 @@ const disableOne = async ({ id }) => {
 };
 
 const updateOne = async ({
-  id, category_id, name, description, price, quantity, unit, is_taxable, enable,
+  id, account_id, category_id, name, description, price, quantity, unit, is_taxable, enable, base_quantity,
 }) => {
   if (enable !== undefined) {
     if (enable) {
-      return enableOne({ id });
+      return enableOne({ id, account_id });
     }
     if (!enable) {
-      return disableOne({ id });
+      return disableOne({ id, account_id });
     }
   }
 
-  const product = await getOne({ id });
+  const product = await getOne({ id, account_id });
 
   product.category_id = category_id || product.category_id;
   product.name = name || product.name;
   product.description = description || product.description;
   product.price = price || product.price;
   product.quantity = quantity || product.quantity;
+  product.base_quantity = base_quantity || product.base_quantity;
   product.unit = unit || product.unit;
   product.is_taxable = is_taxable || product.is_taxable;
   return product.save();
 };
 
-const deleteOne = async ({ id }) => {
-  const product = await getOne({ id });
+const deleteOne = async ({ id, account_id }) => {
+  const product = await getOne({ id, account_id });
 
   // TODO Add check for product in orders and cart. If product is already available in cart or in orders list.
   // Throw error and restrict user from deletion.
