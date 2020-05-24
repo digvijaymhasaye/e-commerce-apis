@@ -39,6 +39,7 @@ const getOne = async (req, res, next) => {
     const validatedReqData = await getListValidation.validate(req.query);
     const user = await userService.getOne({
       id,
+      account_id: req.headers.account_id,
       ...validatedReqData,
     });
     return successUtils.handler({ user }, req, res);
@@ -52,7 +53,7 @@ const signIn = async (req, res, next) => {
   try {
     const validatedReqData = await userSignInValidation.validate(reqBody);
     const user = await userService.signIn({
-      account_id: req.headers['account-id'],
+      account_id: req.headers.account_id,
       ...validatedReqData,
     });
     return successUtils.handler({ user }, req, res);
@@ -66,7 +67,7 @@ const signUp = async (req, res, next) => {
   try {
     const validatedReqData = await addUserValidation.validate(reqBody);
     const user = await userService.addOne({
-      account_id: req.headers['account-id'],
+      account_id: req.headers.account_id,
       ...validatedReqData,
     });
     return successUtils.handler({ user }, req, res);

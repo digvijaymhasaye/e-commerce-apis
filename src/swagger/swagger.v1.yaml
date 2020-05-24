@@ -882,10 +882,6 @@ components:
         mobile_no:
           type: integer
           maximum: 10
-        account_id:
-          type: integer
-          default: 1
-          minimum: 1
         image_id:
           type: integer
           default: 0
