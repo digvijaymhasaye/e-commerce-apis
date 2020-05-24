@@ -30,8 +30,9 @@ paths:
       parameters:
         - schema:
             type: integer
+            default: 1
           in: header
-          name: account-id
+          name: account_id
           required: true
       requestBody:
         content:
@@ -173,8 +174,9 @@ paths:
       parameters:
         - schema:
             type: integer
+            default: 1
           in: header
-          name: account-id
+          name: account_id
           required: true
         - schema:
             type: integer
@@ -312,8 +314,9 @@ paths:
       parameters:
         - schema:
             type: integer
+            default: 1
           in: header
-          name: account-id
+          name: account_id
           required: true
       requestBody:
         content:
@@ -642,13 +645,13 @@ paths:
       parameters:
         - schema:
             type: integer
-            default: '1'
+            default: 1
           in: header
           required: true
           name: account_id
         - schema:
             type: integer
-            default: '1'
+            default: 1
           in: header
           required: true
           name: user_id
