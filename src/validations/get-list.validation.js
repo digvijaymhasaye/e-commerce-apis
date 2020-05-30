@@ -14,5 +14,6 @@ module.exports = Joi.object()
     include_offers: Joi.boolean().label('Include offers'),
     include_coupons: Joi.boolean().label('Include coupons'),
     include_address: Joi.boolean().label('Include address'),
+    category_id: Joi.number().positive(),
   })
   .unknown(true);

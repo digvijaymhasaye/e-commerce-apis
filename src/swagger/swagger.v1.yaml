@@ -102,6 +102,10 @@ paths:
             type: string
           in: query
           name: search
+        - schema:
+            type: integer
+          in: query
+          name: category_id
     post:
       summary: ''
       operationId: post-products
@@ -693,6 +697,49 @@ paths:
           in: header
           name: user_id
           required: true
+  '/otp/mobiles/{mobileNo}/send':
+    parameters:
+      - schema:
+          type: string
+        name: mobileNo
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - OTP
+      responses: {}
+      operationId: get-otp-mobiles-mobileNo-send
+  '/otp/mobiles/{mobileNo}/resend':
+    parameters:
+      - schema:
+          type: string
+        name: mobileNo
+        in: path
+        required: true
+    post:
+      summary: ''
+      operationId: post-otp-mobiles-mobileNo-resend
+      responses:
+        '200':
+          description: OK
+      tags:
+        - OTP
+  '/otp/mobiles/{mobileNo}/verify':
+    parameters:
+      - schema:
+          type: string
+        name: mobileNo
+        in: path
+        required: true
+    post:
+      summary: ''
+      operationId: post-otp-mobiles-mobileNo-verify
+      responses:
+        '200':
+          description: OK
+      tags:
+        - OTP
 components:
   schemas:
     UserSignInRequestBody:

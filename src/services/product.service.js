@@ -7,11 +7,15 @@ const { STATUS } = require('../consts');
 const { getOne: getCategory } = require('./category.service');
 
 const getListCount = async ({
-  account_id, status, search, ids,
+  account_id, status, search, ids, category_id,
 }) => {
   const where = {
     account_id,
   };
+
+  if (category_id) {
+    where.category_id = category_id;
+  }
 
   if (status) {
     where.status = status;
@@ -35,7 +39,8 @@ const getListCount = async ({
 };
 
 const getList = async ({
-  account_id, page_no, page_size, sort_by, sort_order, status, search, ids, include_category, include_offer, include_coupons,
+  account_id, category_id, page_no, page_size, sort_by, sort_order, status, search, ids,
+  include_category, include_offer, include_coupons,
 }) => {
   const limit = page_size;
   const offset = (page_no - 1) * limit;
@@ -43,6 +48,10 @@ const getList = async ({
   const where = {
     account_id,
   };
+
+  if (category_id) {
+    where.category_id = category_id;
+  }
 
   if (status) {
     where.status = status;
