@@ -8,6 +8,16 @@ const couponAudienceMap = require('./coupon-audience-map.model');
 const userGroupUserMap = require('./customer-group-customer-map.model');
 const userGroup = require('./customer-group.model');
 const user = require('./user.model');
+const cart = require('./cart.model');
+const cartItem = require('./cart-item.model');
+const order = require('./order.model');
+const orderItem = require('./order-item.model');
+const customerOrder = require('./customer-order.model');
+const customerOrderItem = require('./customer-order-item.model');
+const session = require('./session.model');
+const customerOrderAddress = require('./customer-order-address.model');
+const customer = require('./customer.model');
+const otp = require('./otp.model');
 
 module.exports = {
   product,
@@ -20,4 +30,14 @@ module.exports = {
   userGroupUserMap,
   userGroup,
   user,
+  cart,
+  cartItem,
+  order,
+  orderItem,
+  session,
+  customerOrderAddress,
+  customer,
+  customerOrder,
+  customerOrderItem,
+  otp,
 };

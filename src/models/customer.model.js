@@ -10,25 +10,30 @@ module.exports = (sequelize, Sequelize) => sequelize.define('customer', {
     type: Sequelize.INTEGER,
     allowNull: false,
   },
-  email_id: {
+  first_name: {
     type: Sequelize.STRING(255),
-    allowNull: true,
+    allowNull: false,
+  },
+  last_name: {
+    type: Sequelize.STRING(255),
   },
   mobile_no: {
     type: Sequelize.INTEGER,
     allowNull: false,
   },
-  hash: {
-    type: Sequelize.STRING(255),
-    allowNull: true,
-  },
-  salt: {
-    type: Sequelize.STRING(255),
-    allowNull: true,
+  is_mobile_verified: {
+    type: Sequelize.TINYINT(1),
+    defaultValue: 0,
   },
   otp: {
-    type: Sequelize.INTEGER(255),
-    allowNull: false,
+    type: Sequelize.INTEGER,
+    defaultValue: 0,
+  },
+  city: {
+    type: Sequelize.STRING(255),
+  },
+  state: {
+    type: Sequelize.STRING(255),
   },
   status: {
     type: Sequelize.TINYINT(1),

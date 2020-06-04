@@ -7,6 +7,8 @@ const updateCategoryValidation = require('./update-category.validation');
 const addImageValidation = require('./add-image.validation');
 const addUserValidation = require('./add-user.validation');
 const userSignInValidation = require('./user-sign-in.validation');
+const addCartItemValidation = require('./add-cart-item.validation');
+const addCustomerValidation = require('./add-customer.validation');
 
 module.exports = {
   getListValidation,
@@ -18,4 +20,6 @@ module.exports = {
   updateCategoryValidation,
   addUserValidation,
   userSignInValidation,
+  addCartItemValidation,
+  addCustomerValidation,
 };

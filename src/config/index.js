@@ -17,6 +17,8 @@ const config = {
   AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
   AWS_SECRET_KEY_ID: process.env.AWS_SECRET_KEY_ID,
   AWS_BUCKET_NAME: process.env.AWS_BUCKET_NAME,
+  MSG91_AUTH_KEY: process.env.MSG91_AUTH_KEY,
+  MSG91_OTP_TEMPLATE_ID: process.env.MSG91_OTP_TEMPLATE_ID,
 };
 
 module.exports = config;

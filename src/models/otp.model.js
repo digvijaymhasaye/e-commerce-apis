@@ -1,27 +1,28 @@
-const { STATUS } = require('../consts');
+const { OTP_STATUS } = require('../consts');
 
-module.exports = (sequelize, Sequelize) => sequelize.define('cart_item', {
+module.exports = (sequelize, Sequelize) => sequelize.define('otp', {
   id: {
     type: Sequelize.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   },
-  cart_id: {
+  account_id: {
     type: Sequelize.INTEGER,
-    allowNull: false,
   },
-  product_id: {
-    type: Sequelize.INTEGER,
-    allowNull: false,
+  mobile_no: {
+    type: Sequelize.STRING(10),
   },
-  quantity: {
+  email_id: {
+    type: Sequelize.STRING(255),
+  },
+  otp: {
     type: Sequelize.INTEGER,
-    defaultValue: 1,
+    // allowNull: false,
   },
   status: {
     type: Sequelize.TINYINT(1),
     allowNull: false,
-    defaultValue: STATUS.ENABLED,
+    defaultValue: OTP_STATUS.SENT,
   },
   deleted: {
     type: Sequelize.INTEGER,

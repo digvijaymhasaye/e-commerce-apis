@@ -1,26 +1,29 @@
 const { STATUS } = require('../consts');
 
-module.exports = (sequelize, Sequelize) => sequelize.define('cart', {
+module.exports = (sequelize, Sequelize) => sequelize.define('session', {
   id: {
     type: Sequelize.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   },
-  customer_id: {
+  user_type: {
+    type: Sequelize.TINYINT(1),
+    allowNull: false,
+  },
+  user_id: {
     type: Sequelize.INTEGER,
     allowNull: false,
   },
-  last_session_id: {
-    type: Sequelize.INTEGER,
+  app_version: {
+    type: Sequelize.STRING(11),
+  },
+  token: {
+    type: Sequelize.TEXT,
     allowNull: false,
   },
-  delivery_type: {
-    type: Sequelize.INTEGER,
-    defaultValue: 1,
-  },
-  notes: {
-    type: Sequelize.STRING(255),
-    allowNull: true,
+  device_info: {
+    type: Sequelize.JSON,
+    allowNull: false,
   },
   status: {
     type: Sequelize.TINYINT(1),

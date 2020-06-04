@@ -1,13 +1,10 @@
 const bcrypt = require('bcrypt');
 const {
   UserModel,
-  UserDetailModel,
-  ImageModel,
-  AddressModel,
 } = require('../managers').sequelizeManager;
-const { TYPE } = require('../consts');
 const { errorUtils } = require('../utils');
-const { sign, verify } = require('./jwt.service');
+const { sign } = require('./jwt.service');
+const { USER_TYPE } = require('../consts');
 
 const SALT_ROUNDS = 10;
 
@@ -45,7 +42,9 @@ const findByEmailId = async (email_id) => {
  * Sign-in admin into system
  * @param {*} param0
  */
-const signIn = async ({ email_id, password }) => {
+const signIn = async ({
+  email_id, password, app_version, user_agent,
+}) => {
   const user = await findByEmailId(email_id);
 
   const result = bcrypt.compareSync(password, user.hash);
@@ -54,8 +53,12 @@ const signIn = async ({ email_id, password }) => {
     return errorUtils.throwForbiddenError('Invalid password');
   }
 
-  user.type = 'user';
-  const accessToken = sign(user);
+  const session = await sign({
+    app_version,
+    user_type: USER_TYPE.USER,
+    device_info: user_agent,
+    ...user.dataValues,
+  });
 
   const userWithoutPrivateDetails = {
     id: user.id,
@@ -65,10 +68,10 @@ const signIn = async ({ email_id, password }) => {
     mobile_no: user.mobile_no,
     account_id: user.account_id,
     image_id: user.image_id,
-    token: accessToken,
     status: user.status,
     created_at: user.created_at,
     updated_at: user.updated_at,
+    session,
   };
 
   return userWithoutPrivateDetails;
@@ -81,10 +84,11 @@ const signIn = async ({ email_id, password }) => {
  */
 const addOne = async ({
   first_name, last_name, email_id, mobile_no, account_id, image_id, password,
+  user_agent, app_version,
 }) => {
   const salt = bcrypt.genSaltSync(SALT_ROUNDS);
   const hash = bcrypt.hashSync(password, salt);
-  console.log(mobile_no)
+
   const user = await UserModel.create({
     first_name,
     last_name,
@@ -96,8 +100,12 @@ const addOne = async ({
     image_id,
   });
 
-  user.type = 'user';
-  const accessToken = sign(user);
+  const session = await sign({
+    app_version,
+    user_type: USER_TYPE.USER,
+    device_info: user_agent,
+    ...user.dataValues,
+  });
 
   const userWithoutPrivateDetails = {
     id: user.id,
@@ -107,10 +115,10 @@ const addOne = async ({
     mobile_no: user.mobile_no,
     account_id: user.account_id,
     image_id: user.image_id,
-    token: accessToken,
     status: user.status,
     created_at: user.created_at,
     updated_at: user.updated_at,
+    session,
   };
   return userWithoutPrivateDetails;
 };
@@ -128,19 +136,12 @@ const addOne = async ({
 // };
 
 const getOne = async ({ id }) => {
-  const include = [{
-    model: ImageModel,
-    where: {
-      type: TYPE.IMAGE_TYPE.USER,
-    },
-  }];
-
   const user = await UserModel.findOne({
     where: {
       id,
     },
   });
-
+  console.info(`User = ${JSON.stringify(user)}`);
   if (!user) {
     const error = new Error('User not found');
     error.name = 'NotFound';
@@ -153,8 +154,5 @@ const getOne = async ({ id }) => {
 module.exports = {
   signIn,
   addOne,
-  // getDetails,
-  // changePassword,
-  // resetPassword,
   getOne,
 };

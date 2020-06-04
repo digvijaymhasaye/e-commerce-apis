@@ -740,6 +740,146 @@ paths:
           description: OK
       tags:
         - OTP
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                otp:
+                  type: integer
+                  maximum: 4
+                  minimum: 4
+  /carts:
+    post:
+      summary: ''
+      operationId: post-carts
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddCartItemResponse'
+      tags:
+        - Carts
+      description: This API will add new item to cart or update existing cart
+      parameters:
+        - schema:
+            type: integer
+            default: 1
+          in: header
+          name: account_id
+          required: true
+        - schema:
+            type: integer
+            default: 1
+          in: header
+          name: customer_id
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddCartItemModel'
+  '/carts/{cartId}/items':
+    parameters:
+      - schema:
+          type: string
+        name: cartId
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - Carts
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartItemsListResponse'
+      operationId: get-carts-cartId-items
+      description: This API will get list of all cart items
+      parameters:
+        - schema:
+            type: integer
+            default: 1
+          in: header
+          name: account_id
+          required: true
+        - schema:
+            type: integer
+            default: 1
+          in: header
+          name: customer_id
+          required: true
+  '/carts/{cartId}/items/count':
+    parameters:
+      - schema:
+          type: string
+        name: cartId
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - Carts
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountResponse'
+      operationId: get-carts-cartId-items-count
+      description: This API will return cart items count
+      parameters: []
+  /customers/sign-up:
+    parameters: []
+    post:
+      security: []
+      summary: ''
+      operationId: post-customers-sign-up
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerSignUpResponse'
+      parameters:
+        - schema:
+            type: integer
+            default: 1
+          in: header
+          name: account_id
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerSignUpModel'
+  /customers/sign-in:
+    post:
+      summary: ''
+      operationId: post-customers-sign-in
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerSignUpResponse'
+      tags:
+        - Customers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
 components:
   schemas:
     UserSignInRequestBody:
@@ -1013,6 +1153,124 @@ components:
           type: integer
         image_id:
           type: integer
+    AddCartItemModel:
+      title: AddCartItemModel
+      type: object
+      properties:
+        product_id:
+          type: integer
+        quantity:
+          type: number
+          format: double
+      required:
+        - product_id
+        - quantity
+    AddCartItemResponse:
+      title: AddCartItemResponse
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            cart:
+              type: object
+              properties:
+                id:
+                  type: string
+                cart_id:
+                  type: integer
+                product_id:
+                  type: integer
+                quantity:
+                  type: integer
+                status:
+                  type: integer
+                created_at:
+                  type: string
+                  format: date-time
+                updated_at:
+                  type: string
+                  format: date-time
+    CartItemWithProductModel:
+      title: CartItemModel
+      type: object
+      properties:
+        id:
+          type: integer
+        cart_id:
+          type: string
+        product_id:
+          type: string
+        quantity:
+          type: string
+        status:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        product:
+          $ref: '#/components/schemas/ProductWithImagesDefinition'
+    CartItemsListResponse:
+      title: CartItemsListResponse
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            cart_products:
+              type: array
+              items:
+                $ref: '#/components/schemas/CartItemWithProductModel'
+    CustomerSignUpModel:
+      title: CustomerSignUpModel
+      type: object
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        mobile_no:
+          type: integer
+          minimum: 10
+          maximum: 10
+      required:
+        - first_name
+        - last_name
+        - mobile_no
+    CustomerDetailsModel:
+      title: CustomerDetailsModel
+      type: object
+      properties:
+        id:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        mobile_no:
+          type: string
+        is_mobile_verified:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        status:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+    CustomerSignUpResponse:
+      title: CustomerSignUpResponse
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            customer:
+              $ref: '#/components/schemas/CustomerDetailsModel'
   securitySchemes:
     Authorization:
       type: http

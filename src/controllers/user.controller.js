@@ -54,6 +54,8 @@ const signIn = async (req, res, next) => {
     const validatedReqData = await userSignInValidation.validate(reqBody);
     const user = await userService.signIn({
       account_id: req.headers.account_id,
+      user_agent: req.headers['user-agent'],
+      app_version: req.headers['app-version'],
       ...validatedReqData,
     });
     return successUtils.handler({ user }, req, res);

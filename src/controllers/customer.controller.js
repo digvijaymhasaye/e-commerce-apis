@@ -1,8 +1,8 @@
 const { successUtils } = require('../utils');
 const {
-  getId, getListValidation, // signInValidation, addUserValidation, updateNoteValidation,
+  getId, getListValidation, addCustomerValidation, // signInValidation, addUserValidation, updateNoteValidation,
 } = require('../validations');
-const { userService } = require('../services');
+const { customerService } = require('../services');
 
 // const getListCount = async (req, res, next) => {
 //   try {
@@ -37,7 +37,7 @@ const getOne = async (req, res, next) => {
   try {
     const id = await getId.validate(userId);
     const validatedReqData = await getListValidation.validate(req.query);
-    const user = await userService.getOne({
+    const user = await customerService.getOne({
       id,
       ...validatedReqData,
     });
@@ -60,18 +60,21 @@ const getOne = async (req, res, next) => {
 //   }
 // };
 
-// const signUp = async (req, res, next) => {
-//   const reqBody = req.body;
-//   try {
-//     const validatedReqData = await addUserValidation.validate(reqBody);
-//     const user = await userService.addOne({
-//       ...validatedReqData,
-//     });
-//     return successUtils.handler({ user }, req, res);
-//   } catch (err) {
-//     return next(err);
-//   }
-// };
+const signUp = async (req, res, next) => {
+  const reqBody = req.body;
+  try {
+    const validatedReqData = await addCustomerValidation.validate(reqBody);
+    const user = await customerService.signUp({
+      account_id: req.headers.account_id,
+      user_agent: req.headers['user-agent'],
+      app_version: req.headers['app-version'],
+      ...validatedReqData,
+    });
+    return successUtils.handler({ user }, req, res);
+  } catch (err) {
+    return next(err);
+  }
+};
 
 // const updateOne = async (req, res, next) => {
 //   const { userId } = req.params;
@@ -107,7 +110,7 @@ module.exports = {
   // getList,
   getOne,
   // signIn,
-  // signUp,
+  signUp,
   // updateOne,
   // deleteOne,
 };
