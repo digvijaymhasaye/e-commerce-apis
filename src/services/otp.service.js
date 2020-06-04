@@ -43,7 +43,7 @@ const checkEligibility = async ({ account_id, mobile_no, status }) => {
 const updateStatusByMobileNo = async ({ account_id, mobile_no, status }) => {
   const otp = await getByMobileNo({ account_id, mobile_no });
 
-  otp.status = status || otp.status;
+  otp.dataValues.status = status || otp.status;
   return otp.save();
 };
 
@@ -60,6 +60,7 @@ const send = async ({ account_id, mobile_number }) => {
   await axios.get(url);
 
   return OtpModel.create({
+    account_id,
     mobile_no: mobile_number,
     status: OTP_STATUS.SENT,
   });
