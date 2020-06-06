@@ -5,5 +5,5 @@ module.exports = Joi.object()
     name: Joi.string().min(3).max(255).label('Name'),
     description: Joi.string().max(1000).allow('').label('Description'),
     enable: Joi.boolean().label('Enable'),
-    image_id: Joi.number().integer().positive(),
+    image_id: Joi.number().integer(),
   }).min(1);
