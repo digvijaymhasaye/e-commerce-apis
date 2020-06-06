@@ -80,9 +80,9 @@ const getOne = async ({ id, account_id }) => {
       id,
       account_id,
     },
-    // include: {
-    //   model: ImageModel,
-    // },
+    include: {
+      model: ImageModel,
+    },
   });
 
   // console.log(category);
