@@ -13,14 +13,16 @@ AWS.config.update({
 });
 
 const upload = async ({ file_path, owner_id }) => {
+  console.log('File path = ', file_path);
   const fileBody = await fs.readFileSync(file_path);
-  console.log('File body = ', fileBody);
   const uploadedFile = await S3.upload({
-    Key: `${owner_id}-${uuidV4}${path.extname(file_path)}`,
+    Key: `${owner_id}-${uuidV4()}${path.extname(file_path)}`,
     Body: fileBody,
     ACL: 'public-read',
     Bucket: config.AWS_BUCKET_NAME,
   }).promise();
+
+  console.info(`Uploaded file = ${uploadedFile}`);
 
   return uploadedFile;
 };
