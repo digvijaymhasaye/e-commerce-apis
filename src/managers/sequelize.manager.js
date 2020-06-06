@@ -73,8 +73,8 @@ ProductModel.belongsTo(CategoryModel, { foreignKey: 'category_id' });
 ProductModel.belongsToMany(ImageModel, { through: ProductImageMapModel, foreignKey: 'id' });
 ImageModel.belongsToMany(ProductModel, { through: ProductImageMapModel, foreignKey: 'image_id' });
 
-CategoryModel.hasOne(ImageModel, { foreignKey: 'id' });
-ImageModel.belongsTo(CategoryModel, { foreignKey: 'id' });
+CategoryModel.belongsTo(ImageModel, { foreignKey: 'image_id' });
+ImageModel.hasOne(CategoryModel, { foreignKey: 'image_id' });
 
 // OfferModel.hasMany(ImageModel, { foreignKey: 'type_id' });
 // ImageModel.belongsTo(OfferModel, { foreignKey: 'type_id' });
