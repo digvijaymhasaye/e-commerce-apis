@@ -22,7 +22,7 @@ const upload = async ({ file_path, owner_id }) => {
     Bucket: config.AWS_BUCKET_NAME,
   }).promise();
 
-  console.info(`Uploaded file = ${uploadedFile}`);
+  console.info(`Uploaded file = ${JSON.stringify(uploadedFile)}`);
 
   return uploadedFile;
 };
