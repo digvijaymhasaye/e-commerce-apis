@@ -3,9 +3,7 @@ const { ImageModel } = require('../managers').sequelizeManager;
 const { errorUtils, aws } = require('../utils');
 const { STATUS } = require('../consts');
 
-const getCount = async () => {
-  return ImageModel.count();
-};
+const getCount = async () => ImageModel.count();
 
 const getList = async ({
   account_id, page_no, page_size, sort_by, sort_order, status, search,

@@ -1,13 +1,12 @@
 const { CartItemModel, CartModel } = require('../managers').sequelizeManager;
-const { getOne: getCustomer } = require('./customer.service');
+// const { getOne: getCustomer } = require('./customer.service');
 const { STATUS } = require('../consts');
-const { ProductModel } = require('../managers/sequelize.manager');
+const { ProductModel, ImageModel } = require('../managers/sequelize.manager');
 const { errorUtils } = require('../utils');
 
-const getItemsCount = async ({ customer_id, cart_id }) => {
+const getItemsCount = async ({ customer_id /* , account_id */ }) => {
   const cart = await CartModel.findOne({
     where: {
-      id: cart_id,
       customer_id,
     },
   });
@@ -17,23 +16,25 @@ const getItemsCount = async ({ customer_id, cart_id }) => {
   }
 
   return CartItemModel.count({
-    where: {
-      cart_id,
-    },
-    include: {
+    include: [{
       model: ProductModel,
       attributes: [],
       where: {
         status: STATUS.ENABLED,
       },
-    },
+    }, {
+      model: CartModel,
+      where: {
+        customer_id,
+      },
+      attributes: [],
+    }],
   });
 };
 
-const getItems = async ({ customer_id, cart_id }) => {
+const getProducts = async ({ customer_id }) => {
   const cart = await CartModel.findOne({
     where: {
-      id: cart_id,
       customer_id,
     },
   });
@@ -43,12 +44,24 @@ const getItems = async ({ customer_id, cart_id }) => {
   }
 
   return CartItemModel.findAll({
-    where: {
-      cart_id,
-    },
-    include: {
+    include: [{
       model: ProductModel,
-    },
+      where: {
+        status: STATUS.ENABLED,
+      },
+      include: {
+        model: ImageModel,
+        through: {
+          attributes: [],
+        },
+      },
+    }, {
+      model: CartModel,
+      where: {
+        customer_id,
+      },
+      attributes: [],
+    }],
   });
 };
 
@@ -62,7 +75,7 @@ const getActiveCartByCustomerId = async ({ customer_id }) => CartModel.findOne({
 const addOne = async ({
   account_id, customer_id, session_id, product_id, quantity,
 }) => {
-  await getCustomer({ account_id, id: customer_id });
+  // await getCustomer({ account_id, id: customer_id });
 
   const product = await ProductModel.findOne({
     where: {
@@ -107,12 +120,13 @@ const addOne = async ({
   });
 
   if (!cartProduct) {
-    await CartItemModel.findOne({
-      where: {
-        cart_id: cart.id,
-        product_id,
-      },
+    await CartItemModel.create({
+      cart_id: cart.id,
+      product_id,
+      quantity,
     });
+  } else if (quantity === 0) {
+    return cartProduct.destroy();
   } else {
     cartProduct.quantity = quantity;
     await cartProduct.save();
@@ -124,12 +138,15 @@ const addOne = async ({
     },
     include: {
       model: CartItemModel,
+      where: {
+        product_id,
+      },
     },
   });
 };
 
 module.exports = {
-  getItems,
+  getProducts,
   getItemsCount,
   addOne,
 };
