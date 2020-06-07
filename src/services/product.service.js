@@ -135,7 +135,7 @@ const getOne = async ({ id, account_id }) => {
 };
 
 const addOne = async ({
-  account_id, name, description, is_taxable, price, quantity, unit, category_id, base_quantity, image_id,
+  account_id, name, description, is_taxable, price, quantity, unit, category_id, base_quantity, image_ids,
 }) => {
   await getCategory({ id: category_id, account_id });
 
@@ -151,10 +151,17 @@ const addOne = async ({
     is_taxable,
   });
 
-  await ProductImageMapModel.create({
-    image_id,
+  const images = [];
+  const image = {
     product_id: product.id,
+  };
+
+  image_ids.forEach((eachImageId) => {
+    image.image_id = eachImageId;
+    images.push(image);
   });
+
+  await ProductImageMapModel.bulkCreate(images);
 
   return getOne({ id: product.id, account_id });
 };

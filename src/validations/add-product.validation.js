@@ -12,5 +12,7 @@ module.exports = Joi.object()
     unit: Joi.string().valid('kg', 'dozens', 'packets').label('Unit'),
     category_id: Joi.number().integer().positive().required()
       .label('Category Id'),
-    image_id: Joi.number().integer().positive(),
+    image_ids: Joi.array().items(
+      Joi.number().integer().positive()).min(1).max(5)
+      .required(),
   }).min(1);

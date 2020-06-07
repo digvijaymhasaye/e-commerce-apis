@@ -1151,8 +1151,10 @@ components:
           type: integer
         base_quantity:
           type: integer
-        image_id:
-          type: integer
+        image_ids:
+          type: array
+          items:
+            type: integer
     AddCartItemModel:
       title: AddCartItemModel
       type: object
