@@ -132,13 +132,11 @@ const addOne = async ({
       total_price: quantity * product.price,
     });
 
-    await CartItemModel.create({
+    return CartItemModel.create({
       cart_id: cart.id,
       product_id,
       quantity,
     });
-
-    return getProduct({ account_id, customer_id, product_id });
   }
 
   const cartProduct = await CartItemModel.findOne({
@@ -149,19 +147,18 @@ const addOne = async ({
   });
 
   if (!cartProduct) {
-    await CartItemModel.create({
+    return CartItemModel.create({
       cart_id: cart.id,
       product_id,
       quantity,
     });
-  } else if (quantity === 0) {
+  }
+  if (quantity === 0) {
     return cartProduct.destroy();
-  } else {
-    cartProduct.quantity = quantity;
-    await cartProduct.save();
   }
 
-  return getProduct({ account_id, customer_id, product_id });
+  cartProduct.quantity = quantity;
+  return cartProduct.save();
 };
 
 module.exports = {
