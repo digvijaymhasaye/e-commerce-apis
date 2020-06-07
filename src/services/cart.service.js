@@ -152,7 +152,7 @@ const addOne = async ({
     },
   });
 
-  if (!cartProduct) {
+  if (!cartProduct && quantity !== 0) {
     return CartItemModel.create({
       cart_id: cart.id,
       product_id,
