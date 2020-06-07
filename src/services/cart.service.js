@@ -76,7 +76,7 @@ const getProduct = async ({ account_id, customer_id, product_id }) => {
     errorUtils.throwNotFoundError('Cart Not Found');
   }
 
-  return CartItemModel.findOne({
+  const cartProduct = await CartItemModel.findOne({
     where: {
       product_id,
     },
@@ -99,6 +99,12 @@ const getProduct = async ({ account_id, customer_id, product_id }) => {
       attributes: [],
     }],
   });
+
+  if (!cartProduct) {
+    errorUtils.throwNotFoundError('Product is not present in cart');
+  }
+
+  return cartProduct;
 };
 
 const getActiveCartByCustomerId = async ({ customer_id }) => CartModel.findOne({
