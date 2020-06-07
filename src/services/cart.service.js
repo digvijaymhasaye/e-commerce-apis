@@ -138,14 +138,7 @@ const addOne = async ({
       quantity,
     });
 
-    return CartModel.findOne({
-      where: {
-        id: cart.id,
-      },
-      include: {
-        model: CartItemModel,
-      },
-    });
+    return getProduct({ account_id, customer_id, product_id });
   }
 
   const cartProduct = await CartItemModel.findOne({
@@ -168,17 +161,7 @@ const addOne = async ({
     await cartProduct.save();
   }
 
-  return CartModel.findOne({
-    where: {
-      id: cart.id,
-    },
-    include: {
-      model: CartItemModel,
-      where: {
-        product_id,
-      },
-    },
-  });
+  return getProduct({ account_id, customer_id, product_id });
 };
 
 module.exports = {
