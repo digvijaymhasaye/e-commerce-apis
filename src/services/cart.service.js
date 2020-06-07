@@ -159,7 +159,7 @@ const addOne = async ({
       quantity,
     });
   }
-  if (quantity === 0) {
+  if (cartProduct && quantity === 0) {
     return cartProduct.destroy();
   }
 
