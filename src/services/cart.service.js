@@ -65,6 +65,42 @@ const getProducts = async ({ customer_id }) => {
   });
 };
 
+const getProduct = async ({ account_id, customer_id, product_id }) => {
+  const cart = await CartModel.findOne({
+    where: {
+      customer_id,
+    },
+  });
+
+  if (!cart) {
+    errorUtils.throwNotFoundError('Cart Not Found');
+  }
+
+  return CartItemModel.findOne({
+    where: {
+      product_id,
+    },
+    include: [{
+      model: ProductModel,
+      where: {
+        status: STATUS.ENABLED,
+      },
+      include: {
+        model: ImageModel,
+        through: {
+          attributes: [],
+        },
+      },
+    }, {
+      model: CartModel,
+      where: {
+        customer_id,
+      },
+      attributes: [],
+    }],
+  });
+};
+
 const getActiveCartByCustomerId = async ({ customer_id }) => CartModel.findOne({
   where: {
     customer_id,
@@ -149,4 +185,5 @@ module.exports = {
   getProducts,
   getItemsCount,
   addOne,
+  getProduct,
 };

@@ -1,6 +1,6 @@
 const { successUtils } = require('../utils');
 const {
-  addCartItemValidation,
+  addCartItemValidation, getId,
 } = require('../validations');
 const { cartService } = require('../services');
 
@@ -27,6 +27,21 @@ const getCartItems = async (req, res, next) => {
   }
 };
 
+const getCartProduct = async (req, res, next) => {
+  const { productId } = req.params;
+  try {
+    const validatedProductId = await getId.validate(productId);
+    const product = await cartService.getProduct({
+      account_id: req.headers.account_id,
+      customer_id: req.headers.customer_id,
+      product_id: validatedProductId,
+    });
+    return successUtils.handler({ product }, req, res);
+  } catch (err) {
+    return next(err);
+  }
+};
+
 const addCartItem = async (req, res, next) => {
   const reqBody = req.body;
   try {
@@ -47,4 +62,5 @@ module.exports = {
   getCartItemsCount,
   getCartItems,
   addCartItem,
+  getCartProduct,
 };
