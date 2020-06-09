@@ -46,10 +46,9 @@ const addCartItem = async (req, res, next) => {
   const reqBody = req.body;
   try {
     const validatedReqData = await addCartItemValidation.validate(reqBody);
-    const product = await cartService.addOne({
+    const product = await cartService.addProductToCart({
       account_id: req.headers.account_id,
       customer_id: req.headers.customer_id,
-      session_id: 1, // req.session.id,
       ...validatedReqData,
     });
     return successUtils.handler({ product }, req, res);

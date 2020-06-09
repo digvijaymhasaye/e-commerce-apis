@@ -4,5 +4,5 @@ const getId = require('./get-id.validation');
 module.exports = Joi.object()
   .keys({
     product_id: getId,
-    quantity: Joi.number().integer().required(),
+    quantity: Joi.number().integer().positive().required(),
   }).min(1);

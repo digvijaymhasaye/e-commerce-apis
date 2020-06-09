@@ -167,9 +167,47 @@ const addOne = async ({
   return cartProduct.save();
 };
 
+const addProductToCart = async ({
+  account_id, customer_id, product_id, quantity,
+}) => {
+  // await getCustomer({ account_id, id: customer_id });
+
+  const product = await ProductModel.findOne({
+    where: {
+      account_id,
+      id: product_id,
+    },
+  });
+
+  if (!product) {
+    errorUtils.throwNotFoundError('Product not found');
+  }
+
+  const cart = await getActiveCartByCustomerId({ customer_id });
+
+  const cartProduct = await CartItemModel.findOne({
+    where: {
+      cart_id: cart.id,
+      product_id,
+    },
+  });
+
+  if (!cartProduct) {
+    return CartItemModel.create({
+      cart_id: cart.id,
+      product_id,
+      quantity,
+    });
+  }
+
+  cartProduct.quantity = quantity;
+  return cartProduct.save();
+};
+
 module.exports = {
   getProducts,
   getItemsCount,
   addOne,
+  addProductToCart,
   getProduct,
 };
