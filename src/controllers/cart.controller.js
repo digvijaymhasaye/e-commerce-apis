@@ -21,7 +21,7 @@ const getCartItems = async (req, res, next) => {
     const cartItems = await cartService.getProducts({
       customer_id: req.headers.customer_id,
     });
-    return successUtils.handler({ cart_items: cartItems }, req, res);
+    return successUtils.handler({ products: cartItems }, req, res);
   } catch (err) {
     return next(err);
   }
@@ -57,9 +57,25 @@ const addCartItem = async (req, res, next) => {
   }
 };
 
+const removeCartProduct = async (req, res, next) => {
+  const { productId } = req.params;
+  try {
+    const validatedProductId = await getId.validate(productId);
+    const product = await cartService.removeCartProduct({
+      account_id: req.headers.account_id,
+      customer_id: req.headers.customer_id,
+      product_id: validatedProductId,
+    });
+    return successUtils.handler({ product }, req, res);
+  } catch (err) {
+    return next(err);
+  }
+}
+
 module.exports = {
   getCartItemsCount,
   getCartItems,
   addCartItem,
   getCartProduct,
+  removeCartProduct,
 };

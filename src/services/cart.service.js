@@ -204,10 +204,44 @@ const addProductToCart = async ({
   return cartProduct.save();
 };
 
+const removeCartProduct = async ({ account_id, customer_id, product_id }) => {
+  const cartProduct = await CartItemModel.findOne({
+    where: {
+      product_id,
+    },
+    include: [{
+      model: ProductModel,
+      where: {
+        status: STATUS.ENABLED,
+        account_id,
+      },
+      include: {
+        model: ImageModel,
+        through: {
+          attributes: [],
+        },
+      },
+    }, {
+      model: CartModel,
+      where: {
+        customer_id,
+      },
+      attributes: [],
+    }],
+  });
+
+  if (!cartProduct) {
+    errorUtils.throwNotFoundError('Product is not present in cart');
+  }
+
+  return cartProduct.destroy();
+};
+
 module.exports = {
   getProducts,
   getItemsCount,
   addOne,
   addProductToCart,
   getProduct,
+  removeCartProduct,
 };
