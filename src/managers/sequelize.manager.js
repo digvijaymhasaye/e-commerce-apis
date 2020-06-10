@@ -29,6 +29,7 @@ const sequelize = new Sequelize(config.MYSQL_DB_NAME, config.MYSQL_USERNAME, con
   dialect: 'mysql',
   logging: true,
   dialectOptions: {
+    decimalNumbers: true,
     charset: 'utf8mb4',
   },
   define: {
