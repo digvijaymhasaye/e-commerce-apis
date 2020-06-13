@@ -7,6 +7,7 @@ const imageController = require('./image.controller');
 const userController = require('./user.controller');
 const cartController = require('./cart.controller');
 const otpController = require('./otp.controller');
+const customerAddressController = require('./customer-address.controller');
 
 module.exports = {
   otpController,
@@ -18,4 +19,5 @@ module.exports = {
   imageController,
   userController,
   cartController,
+  customerAddressController,
 };

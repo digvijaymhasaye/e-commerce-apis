@@ -1,4 +1,4 @@
-const { STATUS } = require('../consts');
+const { STATUS, ADDRESS_TYPE } = require('../consts');
 
 module.exports = (sequelize, Sequelize) => sequelize.define('customer_address', {
   id: {
@@ -38,6 +38,14 @@ module.exports = (sequelize, Sequelize) => sequelize.define('customer_address', 
   },
   country: {
     type: Sequelize.INTEGER,
+  },
+  type: {
+    type: Sequelize.TINYINT(1),
+    defaultValue: ADDRESS_TYPE.BOTH,
+  },
+  is_default: {
+    type: Sequelize.TINYINT(1),
+    defaultValue: 1,
   },
   status: {
     type: Sequelize.TINYINT(1),

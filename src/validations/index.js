@@ -9,6 +9,8 @@ const addUserValidation = require('./add-user.validation');
 const userSignInValidation = require('./user-sign-in.validation');
 const addCartItemValidation = require('./add-cart-item.validation');
 const addCustomerValidation = require('./add-customer.validation');
+const addCustomerAddressValidation = require('./add-customer-address.validation');
+const updateCustomerAddressValidation = require('./update-customer-address.validation');
 
 module.exports = {
   getListValidation,
@@ -22,4 +24,6 @@ module.exports = {
   userSignInValidation,
   addCartItemValidation,
   addCustomerValidation,
+  addCustomerAddressValidation,
+  updateCustomerAddressValidation,
 };

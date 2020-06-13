@@ -8,6 +8,7 @@ const cartService = require('./cart.service');
 const sessionService = require('./session.service');
 const customerService = require('./customer.service');
 const otpService = require('./otp.service');
+const customerAddressService = require('./customer-address.service');
 
 module.exports = {
   userService,
@@ -20,4 +21,5 @@ module.exports = {
   sessionService,
   customerService,
   otpService,
+  customerAddressService,
 };

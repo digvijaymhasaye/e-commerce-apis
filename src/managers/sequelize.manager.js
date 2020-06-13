@@ -20,6 +20,7 @@ const {
   customerOrder,
   customerOrderItem,
   otp,
+  customerAddress,
 } = require('../models');
 const config = require('../config');
 
@@ -64,6 +65,7 @@ const SessionModel = session(sequelize, Sequelize);
 const CustomerOrderAddressModel = customerOrderAddress(sequelize, Sequelize);
 const CustomerModel = customer(sequelize, Sequelize);
 const OtpModel = otp(sequelize, Sequelize);
+const CustomerAddressModel = customerAddress(sequelize, Sequelize);
 
 CategoryModel.hasMany(ProductModel, { foreignKey: 'category_id' });
 ProductModel.belongsTo(CategoryModel, { foreignKey: 'category_id' });
@@ -110,6 +112,8 @@ ProductModel.hasMany(OrderItemModel, { foreignKey: 'product_id' });
 CustomerOrderModel.hasMany(CustomerOrderAddressModel, { foreignKey: 'order_id' });
 CustomerOrderAddressModel.belongsTo(CustomerOrderModel, { foreignKey: 'order_id' });
 
+CustomerModel.hasMany(CustomerAddressModel, { foreignKey: 'customer_id' });
+CustomerAddressModel.belongsTo(CustomerModel, { foreignKey: 'customer_id' });
 
 module.exports = {
   sequelize,
@@ -133,4 +137,5 @@ module.exports = {
   CustomerOrderAddressModel,
   CustomerModel,
   OtpModel,
+  CustomerAddressModel,
 };
