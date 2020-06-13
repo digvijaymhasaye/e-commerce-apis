@@ -50,12 +50,12 @@ const getAddress = async (req, res, next) => {
 const addAddress = async (req, res, next) => {
   try {
     const validatedReqBody = await addCustomerAddressValidation.validate(req.body);
-    const count = await customerAddressService.addAddress({
+    const customerAddress = await customerAddressService.addAddress({
       account_id: req.headers.address_id,
       customer_id: req.headers.customer_id,
       ...validatedReqBody,
     });
-    return successUtils.handler({ count }, req, res);
+    return successUtils.handler({ customer_address: customerAddress }, req, res);
   } catch (error) {
     return next(error);
   }
