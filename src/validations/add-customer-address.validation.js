@@ -7,9 +7,9 @@ module.exports = Joi.object()
     mobile_no: Joi.string().max(10).required(),
     address_line_1: Joi.string().min(3).max(1000).required(),
     address_line_2: Joi.string().min(3).max(1000).required(),
-    city: Joi.string().min(3).max(56).required(),
-    state: Joi.string().min(3).max(16).required(),
+    city: Joi.string().min(3).max(56),
+    state: Joi.string().min(3).max(16),
     country: Joi.string().default('India'),
-    type: Joi.number().positive().required(),
+    type: Joi.number().positive().default(1),
     postal_code: Joi.number(),
   }).min(1);
