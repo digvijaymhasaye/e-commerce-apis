@@ -9,6 +9,6 @@ const customerRoutes = express.Router({ mergeParams: true });
 // customerRoutes.get('/:customerId', customerController.getOne);
 customerRoutes.post('/sign-up', customerController.signUp);
 // customerRoutes.post('/sign-in', customerController.signIn);
-customerRoutes.get('/addresses', customerAddressRoutes);
+customerRoutes.use('/addresses', customerAddressRoutes);
 
 module.exports = customerRoutes;
