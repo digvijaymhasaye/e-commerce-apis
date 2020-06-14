@@ -156,10 +156,15 @@ const addOne = async ({
     product_id: product.id,
   };
 
+  console.info(`1. Image ids => ${image_ids}`);
   image_ids.forEach((eachImageId) => {
     image.image_id = eachImageId;
+    console.info(`Each image object => ${image}`);
     images.push(image);
+    console.info(`Images after each iteration => ${images}`);
   });
+
+  console.info(`Images for product => ${images}`);
 
   await ProductImageMapModel.bulkCreate(images);
 
