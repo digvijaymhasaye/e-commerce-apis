@@ -152,13 +152,13 @@ const addOne = async ({
   });
 
   const images = [];
-  const image = {
-    product_id: product.id,
-  };
 
   console.info(`1. Image ids => ${image_ids}`);
   image_ids.forEach((eachImageId) => {
-    image.image_id = eachImageId;
+    const image = {
+      product_id: product.id,
+      image_id: eachImageId,
+    };
     console.info(`Each image object => ${JSON.stringify(image)}`);
     images.push(image);
     console.info(`Images after each iteration => ${JSON.stringify(images)}`);
