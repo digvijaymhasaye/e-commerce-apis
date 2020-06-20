@@ -21,6 +21,7 @@ const {
   customerOrderItem,
   otp,
   customerAddress,
+  payment,
 } = require('../models');
 const config = require('../config');
 
@@ -66,6 +67,7 @@ const CustomerOrderAddressModel = customerOrderAddress(sequelize, Sequelize);
 const CustomerModel = customer(sequelize, Sequelize);
 const OtpModel = otp(sequelize, Sequelize);
 const CustomerAddressModel = customerAddress(sequelize, Sequelize);
+const PaymentModel = payment(sequelize, Sequelize);
 
 CategoryModel.hasMany(ProductModel, { foreignKey: 'category_id' });
 ProductModel.belongsTo(CategoryModel, { foreignKey: 'category_id' });
@@ -109,11 +111,20 @@ CustomerOrderItemModel.belongsTo(CustomerOrderModel, { foreignKey: 'order_id' })
 OrderItemModel.belongsTo(ProductModel, { foreignKey: 'product_id' });
 ProductModel.hasMany(OrderItemModel, { foreignKey: 'product_id' });
 
-CustomerOrderModel.hasMany(CustomerOrderAddressModel, { foreignKey: 'order_id' });
+CustomerOrderItemModel.belongsTo(ProductModel, { foreignKey: 'product_id' });
+ProductModel.hasMany(CustomerOrderItemModel, { foreignKey: 'product_id' });
+
+CustomerOrderModel.hasOne(CustomerOrderAddressModel, { foreignKey: 'order_id' });
 CustomerOrderAddressModel.belongsTo(CustomerOrderModel, { foreignKey: 'order_id' });
 
 CustomerModel.hasMany(CustomerAddressModel, { foreignKey: 'customer_id' });
 CustomerAddressModel.belongsTo(CustomerModel, { foreignKey: 'customer_id' });
+
+CustomerOrderModel.hasOne(PaymentModel, { foreignKey: 'order_id' });
+PaymentModel.belongsTo(CustomerOrderModel, { foreignKey: 'order_id' });
+
+CustomerModel.hasOne(PaymentModel, { foreignKey: 'payer_id' });
+PaymentModel.belongsTo(PaymentModel, { foreignKey: 'payer_id' });
 
 module.exports = {
   sequelize,
@@ -138,4 +149,5 @@ module.exports = {
   CustomerModel,
   OtpModel,
   CustomerAddressModel,
+  PaymentModel,
 };

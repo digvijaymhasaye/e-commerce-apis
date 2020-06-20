@@ -9,6 +9,7 @@ const sessionService = require('./session.service');
 const customerService = require('./customer.service');
 const otpService = require('./otp.service');
 const customerAddressService = require('./customer-address.service');
+const customerOrderService = require('./customer-order.service');
 
 module.exports = {
   userService,
@@ -22,4 +23,5 @@ module.exports = {
   customerService,
   otpService,
   customerAddressService,
+  customerOrderService,
 };

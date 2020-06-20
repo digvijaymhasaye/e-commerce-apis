@@ -1,4 +1,4 @@
-const { STATUS } = require('../consts');
+const { STATUS, ORDER_STATUS } = require('../consts');
 
 module.exports = (sequelize, Sequelize) => sequelize.define('customer_order', {
   id: {
@@ -6,7 +6,15 @@ module.exports = (sequelize, Sequelize) => sequelize.define('customer_order', {
     primaryKey: true,
     autoIncrement: true,
   },
+  account_id: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+  },
   customer_id: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+  },
+  cart_id: {
     type: Sequelize.INTEGER,
     allowNull: false,
   },
@@ -35,7 +43,7 @@ module.exports = (sequelize, Sequelize) => sequelize.define('customer_order', {
   status: {
     type: Sequelize.TINYINT(1),
     allowNull: false,
-    defaultValue: STATUS.ENABLED,
+    defaultValue: ORDER_STATUS.INITIATED,
   },
   deleted: {
     type: Sequelize.INTEGER,

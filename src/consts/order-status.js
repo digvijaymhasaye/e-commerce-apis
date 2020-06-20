@@ -1,0 +1,9 @@
+module.exports = {
+  INITIATED: 0,
+  PLACED: 1,
+  RECEIVED: 2,
+  OUT_FOR_DELIVERY: 3,
+  DELIVERED: 4,
+  FAILED: 5,
+  CANCELLED: 6,
+};

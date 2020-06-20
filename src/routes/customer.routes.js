@@ -1,5 +1,6 @@
 const express = require('express');
 const customerAddressRoutes = require('./customer-address.routes');
+const customerOrderRoutes = require('./order.routes');
 const { customerController } = require('../controllers');
 
 const customerRoutes = express.Router({ mergeParams: true });
@@ -10,5 +11,6 @@ const customerRoutes = express.Router({ mergeParams: true });
 customerRoutes.post('/sign-up', customerController.signUp);
 // customerRoutes.post('/sign-in', customerController.signIn);
 customerRoutes.use('/addresses', customerAddressRoutes);
+customerRoutes.use('/orders', customerOrderRoutes);
 
 module.exports = customerRoutes;

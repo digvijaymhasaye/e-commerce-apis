@@ -11,6 +11,8 @@ const addCartItemValidation = require('./add-cart-item.validation');
 const addCustomerValidation = require('./add-customer.validation');
 const addCustomerAddressValidation = require('./add-customer-address.validation');
 const updateCustomerAddressValidation = require('./update-customer-address.validation');
+const initiatePaymentValidation = require('./initiate-payment.validation');
+const capturePaymentValidation = require('./capture-payment.validation');
 
 module.exports = {
   getListValidation,
@@ -26,4 +28,6 @@ module.exports = {
   addCustomerValidation,
   addCustomerAddressValidation,
   updateCustomerAddressValidation,
+  initiatePaymentValidation,
+  capturePaymentValidation,
 };

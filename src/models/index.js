@@ -19,6 +19,7 @@ const customerOrderAddress = require('./customer-order-address.model');
 const customer = require('./customer.model');
 const otp = require('./otp.model');
 const customerAddress = require('./customer-address.model');
+const payment = require('./payment.model');
 
 module.exports = {
   product,
@@ -42,4 +43,5 @@ module.exports = {
   customerOrderItem,
   otp,
   customerAddress,
+  payment,
 };

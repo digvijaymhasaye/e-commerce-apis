@@ -1,8 +1,10 @@
 const express = require('express');
-const { orderController } = require('../controllers');
+const { customerOrderController } = require('../controllers');
 
-const orderRoutes = express.Router({ mergeParams: true });
+const customerOrderRoutes = express.Router({ mergeParams: true });
 
-orderRoutes.get('/', orderController.getList);
-orderRoutes.post('/', orderController.addOne);
+customerOrderRoutes.get('/', customerOrderController.getCustomerOrders);
+customerOrderRoutes.post('/initiate', customerOrderController.initiateOrder);
+customerOrderRoutes.post('/:orderId/finalise', customerOrderController.finaliseOrder);
 
+module.exports = customerOrderRoutes;

@@ -237,6 +237,33 @@ const removeCartProduct = async ({ account_id, customer_id, product_id }) => {
   return cartProduct.destroy();
 };
 
+const getInvoice = async ({ account_id, customer_id }) => {
+  const cartItems = await getProducts({ customer_id });
+  const invoice = {
+    total_amount: 0,
+    cart_amount: 0,
+    delivery_fee: 0,
+    gst: 0,
+    discount: {
+      percentile: 0,
+      amount: 0,
+    },
+  };
+
+  if (cartItems.length === 0) {
+    return invoice;
+  }
+
+  cartItems.forEach((eachItems) => {
+    const eachItemTotalPrice = (eachItems.quantity * eachItems.product.price);
+    invoice.cart_amount += eachItemTotalPrice;
+  });
+
+  const totalPrice = (invoice.cart_amount + invoice.delivery_fee + invoice.gst);
+  invoice.total_amount = totalPrice;
+  return invoice;
+};
+
 module.exports = {
   getProducts,
   getItemsCount,
@@ -244,4 +271,5 @@ module.exports = {
   addProductToCart,
   getProduct,
   removeCartProduct,
+  getInvoice,
 };

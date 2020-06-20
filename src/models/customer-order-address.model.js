@@ -22,7 +22,7 @@ module.exports = (sequelize, Sequelize) => sequelize.define('customer_order_addr
     type: Sequelize.STRING(255),
   },
   mobile_no: {
-    type: Sequelize.INTEGER,
+    type: Sequelize.STRING(11),
     allowNull: false,
   },
   address_line_1: {

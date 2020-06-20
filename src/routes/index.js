@@ -8,6 +8,7 @@ const cartRoutes = require('./cart.routes');
 const imageRoutes = require('./image.routes');
 const customerRoutes = require('./customer.routes');
 const otpRoutes = require('./otp.routes');
+const paymentRoutes = require('./payment.routes');
 
 const apiRoutes = express.Router();
 
@@ -19,6 +20,7 @@ apiRoutes.use('/images', imageRoutes);
 apiRoutes.use('/carts', cartRoutes);
 apiRoutes.use('/customers', customerRoutes);
 apiRoutes.use('/otp', otpRoutes);
+apiRoutes.use('/payments', paymentRoutes);
 
 // apiRoutes.use('*', (req, res) => res.status(handlers.response.STATUS.NOT_FOUND)
 //   .send(handlers.response.getErrorPayload('Route Not Found', handlers.response.STATUS.NOT_FOUND)));

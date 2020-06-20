@@ -231,6 +231,28 @@ const deleteOne = async ({ id, account_id }) => {
   return product.destroy();
 };
 
+const updateProductQuantityAfterOrder = async ({ account_id, products }) => {
+  const productsBulkBody = [];
+
+  products.forEach((eachProduct) => {
+    const product = {
+      account_id,
+      category_id: 0,
+      name: '',
+      price: 0,
+      base_quantity: 0,
+      id: eachProduct.product_id,
+      quantity: eachProduct.product.quantity - eachProduct.quantity,
+    };
+
+    productsBulkBody.push(product);
+  });
+
+  return ProductModel.bulkCreate(productsBulkBody, {
+    updateOnDuplicate: ['quantity'],
+  });
+};
+
 module.exports = {
   getListCount,
   getList,
@@ -238,4 +260,5 @@ module.exports = {
   addOne,
   updateOne,
   deleteOne,
+  updateProductQuantityAfterOrder,
 };

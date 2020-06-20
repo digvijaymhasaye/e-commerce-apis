@@ -19,6 +19,8 @@ const config = {
   AWS_BUCKET_NAME: process.env.AWS_BUCKET_NAME,
   MSG91_AUTH_KEY: process.env.MSG91_AUTH_KEY,
   MSG91_OTP_TEMPLATE_ID: process.env.MSG91_OTP_TEMPLATE_ID,
+  RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID,
+  RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET,
 };
 
 module.exports = config;

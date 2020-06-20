@@ -45,6 +45,21 @@ const getAddress = async ({ account_id, customer_id }) => {
   return address;
 };
 
+const getAddressById = async ({ customer_id, address_id }) => {
+  const address = await CustomerAddressModel.findOne({
+    where: {
+      customer_id,
+      id: address_id,
+    },
+  });
+
+  if (!address) {
+    errorUtils.throwNotFoundError('Address not found');
+  }
+
+  return address;
+};
+
 const addAddress = async ({
   account_id, customer_id, first_name, last_name, mobile_no, address_line_1, address_line_2,
   city, state, country, postal_code, type,
@@ -70,4 +85,5 @@ module.exports = {
   getAddressList,
   getAddress,
   addAddress,
+  getAddressById,
 };
