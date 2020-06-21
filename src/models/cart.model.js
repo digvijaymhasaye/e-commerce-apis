@@ -12,6 +12,7 @@ module.exports = (sequelize, Sequelize) => sequelize.define('cart', {
   },
   last_session_id: {
     type: Sequelize.INTEGER,
+    defaultValue: 0,
     allowNull: false,
   },
   delivery_type: {

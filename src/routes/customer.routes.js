@@ -1,6 +1,6 @@
 const express = require('express');
 const customerAddressRoutes = require('./customer-address.routes');
-const customerOrderRoutes = require('./order.routes');
+const customerOrderRoutes = require('./customer-order.routes');
 const { customerController } = require('../controllers');
 
 const customerRoutes = express.Router({ mergeParams: true });

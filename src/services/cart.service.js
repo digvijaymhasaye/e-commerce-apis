@@ -168,7 +168,7 @@ const addOne = async ({
 };
 
 const addProductToCart = async ({
-  account_id, customer_id, product_id, quantity,
+  account_id, customer_id, product_id, quantity, session_id,
 }) => {
   // await getCustomer({ account_id, id: customer_id });
 
@@ -183,7 +183,14 @@ const addProductToCart = async ({
     errorUtils.throwNotFoundError('Product not found');
   }
 
-  const cart = await getActiveCartByCustomerId({ customer_id });
+  let cart = await getActiveCartByCustomerId({ customer_id });
+
+  if (!cart) {
+    cart = await CartModel.create({
+      customer_id,
+      last_session_id: session_id,
+    });
+  }
 
   const cartProduct = await CartItemModel.findOne({
     where: {
