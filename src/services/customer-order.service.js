@@ -1,13 +1,13 @@
 const {
   PaymentModel, CustomerModel, CustomerOrderModel,
   CustomerOrderAddressModel, CustomerOrderItemModel,
-  ProductModel, ImageModel,
+  ProductModel, ImageModel, ProductImageMapModel,
 } = require('../managers/sequelize.manager');
-const { getProducts, getInvoice } = require('./cart.service');
+const { getProducts, getInvoice, disableCart } = require('./cart.service');
 const { getAddressById } = require('./customer-address.service');
 const { updateProductQuantityAfterOrder } = require('./product.service');
 const { errorUtils } = require('../utils');
-const { DELIVERY_TYPE } = require('../consts');
+const { DELIVERY_TYPE, ORDER_STATUS } = require('../consts');
 
 const getOrdersByCustomerId = async ({ account_id, customer_id, include_payment }) => {
   const include = [{
@@ -43,6 +43,42 @@ const getOrdersByCustomerId = async ({ account_id, customer_id, include_payment 
   return orders;
 };
 
+const getOrderItemListByCustomerId = async ({
+  account_id, customer_id, page_no, page_size, sort_by, sort_order,
+}) => {
+  const limit = page_size;
+  const offset = (page_no - 1) * limit;
+
+  const order = [];
+  order.push([sort_by, sort_order]);
+
+  const include = [{
+    model: ProductModel,
+    where: {
+      account_id,
+    },
+    include: {
+      model: ImageModel,
+      through: {
+        attributes: [],
+      },
+    },
+  }, {
+    model: CustomerOrderModel,
+    where: {
+      customer_id,
+      account_id,
+    },
+  }];
+
+  return CustomerOrderItemModel.findAll({
+    include,
+    order,
+    limit,
+    offset,
+  });
+};
+
 const getOrder = async ({ account_id, customer_id, order_id }) => {
   const order = await CustomerOrderModel.findOne({
     where: {
@@ -76,7 +112,7 @@ const initiateOrder = async ({
     session_id: 1,
     cart_id: cartId,
     items_count: cartItems.length,
-    total_price: invoice.total_amount,
+    total_price: invoice.total_amount * 100,
     delivery_type: DELIVERY_TYPE.STANDARD,
   });
 
@@ -104,6 +140,7 @@ const initiateOrder = async ({
     };
     orderItems.push(orderItem);
   });
+  console.log(orderItems);
   await CustomerOrderItemModel.bulkCreate(orderItems);
   await updateProductQuantityAfterOrder({ account_id, products: cartItems });
 
@@ -113,7 +150,7 @@ const initiateOrder = async ({
 const finaliseOrder = async ({
   account_id, order_id, customer_id, payment_id,
 }) => {
-  const order = await CustomerOrderModel.findOne({
+  let order = await CustomerOrderModel.findOne({
     where: {
       id: order_id,
     },
@@ -123,11 +160,16 @@ const finaliseOrder = async ({
     errorUtils.throwNotFoundError('Order not found');
   }
 
-  return;
+  order.payment_id = payment_id;
+  order.status = ORDER_STATUS.PLACED;
+  order = await order.save();
+  await disableCart({ account_id, customer_id, cart_id: order.cart_id });
+  return order;
 };
 
 module.exports = {
   getOrdersByCustomerId,
+  getOrderItemListByCustomerId,
   getOrder,
   initiateOrder,
   finaliseOrder,

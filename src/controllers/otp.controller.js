@@ -8,7 +8,7 @@ const sendOtp = async (req, res, next) => {
       account_id: req.headers.account_id,
       mobile_number: mobileNo,
     });
-    console.info('OTP = ', otp);
+    // console.info('OTP = ', otp);
     return successUtils.handler({ otp }, req, res);
   } catch (error) {
     return next(error);

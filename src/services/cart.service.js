@@ -8,6 +8,7 @@ const getItemsCount = async ({ customer_id /* , account_id */ }) => {
   const cart = await CartModel.findOne({
     where: {
       customer_id,
+      status: STATUS.ENABLED,
     },
   });
 
@@ -16,6 +17,9 @@ const getItemsCount = async ({ customer_id /* , account_id */ }) => {
   }
 
   return CartItemModel.count({
+    where: {
+      cart_id: cart.id,
+    },
     include: [{
       model: ProductModel,
       attributes: [],
@@ -36,6 +40,7 @@ const getProducts = async ({ customer_id }) => {
   const cart = await CartModel.findOne({
     where: {
       customer_id,
+      status: STATUS.ENABLED,
     },
   });
 
@@ -44,6 +49,9 @@ const getProducts = async ({ customer_id }) => {
   }
 
   return CartItemModel.findAll({
+    where: {
+      cart_id: cart.id,
+    },
     include: [{
       model: ProductModel,
       where: {
@@ -69,6 +77,7 @@ const getProduct = async ({ account_id, customer_id, product_id }) => {
   const cart = await CartModel.findOne({
     where: {
       customer_id,
+      status: STATUS.ENABLED,
     },
   });
 
@@ -79,6 +88,7 @@ const getProduct = async ({ account_id, customer_id, product_id }) => {
   const cartProduct = await CartItemModel.findOne({
     where: {
       product_id,
+      cart_id: cart.id,
     },
     include: [{
       model: ProductModel,
@@ -271,6 +281,17 @@ const getInvoice = async ({ account_id, customer_id }) => {
   return invoice;
 };
 
+const disableCart = async ({account_id, customer_id, cart_id }) => {
+  const cart = await CartModel.findOne({
+    where: {
+      id: cart_id,
+    },
+  });
+
+  cart.status = STATUS.DISABLED;
+  return cart.save();
+};
+
 module.exports = {
   getProducts,
   getItemsCount,
@@ -279,4 +300,5 @@ module.exports = {
   getProduct,
   removeCartProduct,
   getInvoice,
+  disableCart,
 };

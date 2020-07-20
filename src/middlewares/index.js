@@ -1,8 +1,11 @@
-const { jwtService, userService, customerService } = require('../services');
+const {
+  jwtService, userService, customerService,
+  sessionService,
+} = require('../services');
 const { USER_TYPE } = require('../consts');
 
 const authoriser = async (req, res, next) => {
-  console.log(req.headers);
+  console.log(req.originalUrl);
   const bearerToken = req.headers.authorization;
   if (!bearerToken) {
     return res.status(403).json({
@@ -15,11 +18,13 @@ const authoriser = async (req, res, next) => {
     const token = bearerToken.replace('Bearer ', '');
     const userDecodedData = await jwtService.verify(token);
     console.info(`Authoriser - Decoded data: ${JSON.stringify(userDecodedData)}`);
-    const validateUser = userDecodedData.type === USER_TYPE.USER ? userService.getOne : customerService.getOne;
-    const user = await validateUser({ id: userDecodedData.id });
-    req[userDecodedData.type] = {};
-    req[userDecodedData.type].id = user.id;
-    req[userDecodedData.type].account_id = user.account_id;
+    console.info(`Authoriser - Request Header = ${JSON.stringify(req.headers)}`);
+    console.info(`Authoriser - Session id = ${req.headers.session_id}`);
+    await sessionService.getSessionById(req.headers.session_id);
+    console.info(`Authoriser - User Type = ${userDecodedData.user_type}`);
+    const validateUser = userDecodedData.user_type === USER_TYPE.USER ? userService.getOne : customerService.getOne;
+    const user = await validateUser({ id: userDecodedData.user_id });
+    console.info(`Authoriser - User = ${JSON.stringify(user)}`);
     return next();
   } catch (error) {
     console.error(`Authoriser - Error: ${JSON.stringify(error)}`);

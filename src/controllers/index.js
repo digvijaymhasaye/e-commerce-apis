@@ -10,6 +10,7 @@ const otpController = require('./otp.controller');
 const customerAddressController = require('./customer-address.controller');
 const paymentController = require('./payment.controller');
 const customerOrderController = require('./customer-order.controller');
+const feedbackController = require('./feedback.controller');
 
 module.exports = {
   otpController,
@@ -24,4 +25,5 @@ module.exports = {
   customerAddressController,
   paymentController,
   customerOrderController,
+  feedbackController,
 };

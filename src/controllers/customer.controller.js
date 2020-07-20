@@ -1,6 +1,6 @@
 const { successUtils } = require('../utils');
 const {
-  getId, getListValidation, addCustomerValidation, // signInValidation, addUserValidation, updateNoteValidation,
+  getId, getListValidation, addCustomerValidation, customerSignInValidation, // addUserValidation, updateNoteValidation,
 } = require('../validations');
 const { customerService } = require('../services');
 
@@ -37,40 +37,57 @@ const getOne = async (req, res, next) => {
   try {
     const id = await getId.validate(userId);
     const validatedReqData = await getListValidation.validate(req.query);
-    const user = await customerService.getOne({
+    const customer = await customerService.getOne({
       id,
       ...validatedReqData,
     });
-    return successUtils.handler({ user }, req, res);
+    return successUtils.handler({ customer }, req, res);
   } catch (err) {
     return next(err);
   }
 };
 
-// const signIn = async (req, res, next) => {
-//   const reqBody = req.body;
-//   try {
-//     const validatedReqData = await signInValidation.validate(reqBody);
-//     const user = await userService.addOne({
-//       ...validatedReqData,
-//     });
-//     return successUtils.handler({ user }, req, res);
-//   } catch (err) {
-//     return next(err);
-//   }
-// };
-
-const signUp = async (req, res, next) => {
+const signIn = async (req, res, next) => {
   const reqBody = req.body;
   try {
-    const validatedReqData = await addCustomerValidation.validate(reqBody);
-    const user = await customerService.signUp({
+    // console.log(reqBody);
+    const validatedReqData = await customerSignInValidation.validate(reqBody);
+    const customer = await customerService.signIn({
       account_id: req.headers.account_id,
       user_agent: req.headers['user-agent'],
       app_version: req.headers['app-version'],
       ...validatedReqData,
     });
-    return successUtils.handler({ user }, req, res);
+    return successUtils.handler({ customer }, req, res);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+const signUp = async (req, res, next) => {
+  const reqBody = req.body;
+  try {
+    const validatedReqData = await addCustomerValidation.validate(reqBody);
+    const customer = await customerService.signUp({
+      account_id: req.headers.account_id,
+      user_agent: req.headers['user-agent'],
+      app_version: req.headers['app-version'],
+      ...validatedReqData,
+    });
+    return successUtils.handler({ customer }, req, res);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+const signOut = async (req, res, next) => {
+  try {
+    const customer = await customerService.signOut({
+      account_id: req.headers.account_id,
+      customer_id: req.headers.customer_id,
+      session_id: req.headers.session_id,
+    });
+    return successUtils.handler({ customer }, req, res);
   } catch (err) {
     return next(err);
   }
@@ -109,8 +126,9 @@ module.exports = {
   // getListCount,
   // getList,
   getOne,
-  // signIn,
+  signIn,
   signUp,
+  signOut,
   // updateOne,
   // deleteOne,
 };

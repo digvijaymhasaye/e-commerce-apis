@@ -25,6 +25,10 @@ module.exports = (sequelize, Sequelize) => sequelize.define('session', {
     type: Sequelize.JSON,
     allowNull: false,
   },
+  device_token: {
+    type: Sequelize.STRING(1000),
+    allowNull: false,
+  },
   status: {
     type: Sequelize.TINYINT(1),
     allowNull: false,

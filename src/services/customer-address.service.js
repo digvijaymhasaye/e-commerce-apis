@@ -66,19 +66,40 @@ const addAddress = async ({
 }) => {
   await getCustomer({ id: customer_id });
 
-  return CustomerAddressModel.create({
-    customer_id,
-    first_name,
-    last_name,
-    mobile_no,
-    address_line_1,
-    address_line_2,
-    city,
-    state,
-    country,
-    postal_code,
-    type,
+  const exitingAddress = await CustomerAddressModel.findOne({
+    where: {
+      customer_id,
+    },
   });
+
+  if (!exitingAddress) {
+    return CustomerAddressModel.create({
+      customer_id,
+      first_name,
+      last_name,
+      mobile_no,
+      address_line_1,
+      address_line_2,
+      city,
+      state,
+      country,
+      postal_code,
+      type,
+    });
+  }
+
+  exitingAddress.first_name = first_name === undefined ? exitingAddress.first_name : first_name;
+  exitingAddress.last_name = last_name === undefined ? exitingAddress.last_name : last_name;
+  exitingAddress.mobile_no = mobile_no === undefined ? exitingAddress.mobile_no : mobile_no;
+  exitingAddress.address_line_1 = address_line_1 === undefined ? exitingAddress.address_line_1 : address_line_1;
+  exitingAddress.address_line_2 = address_line_2 === undefined ? exitingAddress.address_line_2 : address_line_2;
+  exitingAddress.city = city === undefined ? exitingAddress.city : city;
+  exitingAddress.state = state === undefined ? exitingAddress.state : state;
+  exitingAddress.country = country === undefined ? exitingAddress.country : country;
+  exitingAddress.postal_code = postal_code === undefined ? exitingAddress.postal_code : postal_code;
+  exitingAddress.type = type === undefined ? exitingAddress.type : type;
+
+  return exitingAddress.save();
 };
 
 module.exports = {

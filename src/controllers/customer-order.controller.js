@@ -1,6 +1,20 @@
 const { successUtils } = require('../utils');
 const { customerOrderService } = require('../services');
-const { getId } = require('../validations');
+const { getId, getListValidation } = require('../validations');
+
+const getOrderItemListByCustomerId = async (req, res, next) => {
+  try {
+    const validatedQueryParams = await getListValidation.validate(req.query);
+    const orders = await customerOrderService.getOrderItemListByCustomerId({
+      account_id: req.headers.account_id,
+      customer_id: req.headers.customer_id,
+      ...validatedQueryParams,
+    });
+    return successUtils.handler({ orders }, req, res);
+  } catch (error) {
+    return next(error);
+  }
+};
 
 const getCustomerOrders = async (req, res, next) => {
   try {
@@ -31,11 +45,12 @@ const initiateOrder = async (req, res, next) => {
 const finaliseOrder = async (req, res, next) => {
   const { orderId } = req.params;
   try {
-    const validatedOrderId = getId.validate(orderId);
+    const validatedOrderId = await getId.validate(orderId);
     const order = await customerOrderService.finaliseOrder({
       account_id: req.headers.account_id,
       customer_id: req.headers.customer_id,
-      order_id: validatedOrderId, 
+      order_id: validatedOrderId,
+      ...req.body,
     });
     return successUtils.handler({ order }, req, res);
   } catch (error) {
@@ -47,4 +62,5 @@ module.exports = {
   initiateOrder,
   finaliseOrder,
   getCustomerOrders,
+  getOrderItemListByCustomerId,
 };

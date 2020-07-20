@@ -13,6 +13,8 @@ const addCustomerAddressValidation = require('./add-customer-address.validation'
 const updateCustomerAddressValidation = require('./update-customer-address.validation');
 const initiatePaymentValidation = require('./initiate-payment.validation');
 const capturePaymentValidation = require('./capture-payment.validation');
+const addFeedbackValidation = require('./add-feedback.validation');
+const customerSignInValidation = require('./customer-sign-in.validation');
 
 module.exports = {
   getListValidation,
@@ -30,4 +32,6 @@ module.exports = {
   updateCustomerAddressValidation,
   initiatePaymentValidation,
   capturePaymentValidation,
+  addFeedbackValidation,
+  customerSignInValidation,
 };

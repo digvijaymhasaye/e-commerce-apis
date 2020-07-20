@@ -14,6 +14,15 @@ const getByMobileNo = async ({ account_id, mobile_no }) => OtpModel.findOne({
   ],
 });
 
+const getByMobileNoOtp = async ({ account_id, mobile_no, otp }) => OtpModel.findOne({
+  where: {
+    account_id,
+    mobile_no,
+    otp,
+  },
+});
+
+
 const checkEligibility = async ({ account_id, mobile_no, status }) => {
   const lastOtp = await getByMobileNo({ mobile_no, account_id });
 
@@ -36,15 +45,42 @@ const checkEligibility = async ({ account_id, mobile_no, status }) => {
     return true;
   }
 
-
   return false;
 };
 
-const updateStatusByMobileNo = async ({ account_id, mobile_no, status }) => {
-  const otp = await getByMobileNo({ account_id, mobile_no });
+const generateOtp = async ({ account_id, mobile_no }) => {
+  let isUnique = false;
+  let otp = '';
+  const digits = '0123456789';
 
-  otp.dataValues.status = status || otp.status;
-  return otp.save();
+  while (!isUnique) {
+    for (let i = 0; i < 4; i += 1) {
+      otp += digits[Math.floor(Math.random() * 10)];
+    }
+    otp = Math.floor(1111 + Math.random() * 9999);
+    console.log(otp);
+    // eslint-disable-next-line no-await-in-loop
+    const duplicateOtp = await getByMobileNoOtp({ account_id, mobile_no, otp });
+
+    if (!duplicateOtp || duplicateOtp.status === OTP_STATUS.VERIFIED) {
+      isUnique = true;
+    }
+  }
+
+  return otp;
+};
+
+const updateStatusByMobileNo = async ({
+  account_id, mobile_no, otp, status,
+}) => {
+  const sentOtp = await getByMobileNoOtp({ account_id, mobile_no, otp });
+
+  if (!sentOtp) {
+    errorUtils.throwNotFoundError('OTP not found');
+  }
+
+  sentOtp.status = status || sentOtp.status;
+  return sentOtp.save();
 };
 
 const send = async ({ account_id, mobile_number }) => {
@@ -54,13 +90,18 @@ const send = async ({ account_id, mobile_number }) => {
     errorUtils.throwPreconditionFailed('OTP already sent');
   }
 
-  // const url = `https://api.msg91.com/api/v5/otp?authkey=${config.MSG91_AUTH_KEY}&template_id=${config.MSG91_OTP_TEMPLATE_ID}&mobile=91${mobile_number}
-  //   &invisible=1&otp_expiry=5`;
+  const otp = await generateOtp({ account_id, mobile_no: mobile_number });
+  console.log(otp);
+  const url = `https://api.msg91.com/api/v5/otp?authkey=${config.MSG91_AUTH_KEY}&template_id=${config.MSG91_OTP_TEMPLATE_ID}&mobile=91${mobile_number}
+    &invisible=1&otp=${otp}&otp_expiry=5`;
 
-  // await axios.get(url);
+  const otpResponse = await axios.get(url);
+
+  console.info(otpResponse);
 
   return OtpModel.create({
     account_id,
+    otp,
     mobile_no: mobile_number,
     status: OTP_STATUS.SENT,
   });
@@ -73,18 +114,18 @@ const resend = async ({ account_id, mobile_number }) => {
     errorUtils.throwPreconditionFailed('OTP already sent. It can take upto 2 minutes to get deliver OTP.');
   }
 
-  // const url = `https://api.msg91.com/api/v5/otp/retry?mobile=91${mobile_number}&authkey=${config.MSG91_AUTH_KEY}&retrytype=text`;
+  const url = `https://api.msg91.com/api/v5/otp/retry?mobile=91${mobile_number}&authkey=${config.MSG91_AUTH_KEY}&retrytype=text`;
 
-  // await axios.post(url);
+  await axios.post(url);
 
   return updateStatusByMobileNo({ account_id, mobile_no: mobile_number, status: OTP_STATUS.RESENT });
 };
 
 const verify = async ({ account_id, mobile_number, otp }) => {
   try {
-    // const url = `https://api.msg91.com/api/v5/otp/verify?mobile=91${mobile_number}&otp=${otp}&authkey=${config.MSG91_AUTH_KEY}`;
+    const url = `https://api.msg91.com/api/v5/otp/verify?mobile=91${mobile_number}&otp=${otp}&authkey=${config.MSG91_AUTH_KEY}`;
 
-    // await axios.post(url);
+    await axios.post(url);
   } catch (error) {
     if (error.message === 'otp_expired') {
       await OtpModel.update({
@@ -100,10 +141,13 @@ const verify = async ({ account_id, mobile_number, otp }) => {
     }
   }
 
-  return updateStatusByMobileNo({ account_id, mobile_no: mobile_number, status: OTP_STATUS.VERIFIED });
+  return updateStatusByMobileNo({
+    account_id, otp, mobile_no: mobile_number, status: OTP_STATUS.VERIFIED,
+  });
 };
 
 module.exports = {
+  getByMobileNoOtp,
   send,
   resend,
   verify,

@@ -19,9 +19,10 @@ const {
   customer,
   customerOrder,
   customerOrderItem,
-  otp,
+  customerDeviceInfo,
   customerAddress,
   payment,
+  feedback,
 } = require('../models');
 const config = require('../config');
 
@@ -65,9 +66,10 @@ const CustomerOrderItemModel = customerOrderItem(sequelize, Sequelize);
 const SessionModel = session(sequelize, Sequelize);
 const CustomerOrderAddressModel = customerOrderAddress(sequelize, Sequelize);
 const CustomerModel = customer(sequelize, Sequelize);
-const OtpModel = otp(sequelize, Sequelize);
+const CustomerDeviceInfoModel = customerDeviceInfo(sequelize, Sequelize);
 const CustomerAddressModel = customerAddress(sequelize, Sequelize);
 const PaymentModel = payment(sequelize, Sequelize);
+const FeedBackModel = feedback(sequelize, Sequelize);
 
 CategoryModel.hasMany(ProductModel, { foreignKey: 'category_id' });
 ProductModel.belongsTo(CategoryModel, { foreignKey: 'category_id' });
@@ -95,6 +97,9 @@ UserGroupModel.belongsTo(CouponAudienceModel, { foreignKey: 'type_id' });
 
 CustomerModel.hasOne(CartModel, { foreignKey: 'customer_id' });
 CartModel.belongsTo(CustomerModel, { foreignKey: 'customer_id' });
+
+CustomerModel.hasMany(CustomerDeviceInfoModel, { foreignKey: 'customer_id' });
+CustomerDeviceInfoModel.belongsTo(CustomerModel, { foreignKey: 'customer_id' });
 
 CartModel.hasMany(CartItemModel, { foreignKey: 'cart_id' });
 CartItemModel.belongsTo(CartModel, { foreignKey: 'cart_id' });
@@ -147,7 +152,8 @@ module.exports = {
   CustomerOrderItemModel,
   CustomerOrderAddressModel,
   CustomerModel,
-  OtpModel,
+  CustomerDeviceInfoModel,
   CustomerAddressModel,
   PaymentModel,
+  FeedBackModel,
 };

@@ -1,6 +1,6 @@
 const { OTP_STATUS } = require('../consts');
 
-module.exports = (sequelize, Sequelize) => sequelize.define('otp', {
+module.exports = (sequelize, Sequelize) => sequelize.define('feedback', {
   id: {
     type: Sequelize.INTEGER,
     primaryKey: true,
@@ -9,15 +9,18 @@ module.exports = (sequelize, Sequelize) => sequelize.define('otp', {
   account_id: {
     type: Sequelize.INTEGER,
   },
+  full_name: {
+    type: Sequelize.STRING(255),
+  },
   mobile_no: {
     type: Sequelize.STRING(10),
   },
   email_id: {
     type: Sequelize.STRING(255),
   },
-  otp: {
-    type: Sequelize.INTEGER,
-    // allowNull: false,
+  message: {
+    type: Sequelize.TEXT,
+    allowNull: false,
   },
   status: {
     type: Sequelize.TINYINT(1),

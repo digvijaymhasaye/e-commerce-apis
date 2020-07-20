@@ -17,9 +17,10 @@ const customerOrderItem = require('./customer-order-item.model');
 const session = require('./session.model');
 const customerOrderAddress = require('./customer-order-address.model');
 const customer = require('./customer.model');
-const otp = require('./otp.model');
+const customerDeviceInfo = require('./customer-device-info.model');
 const customerAddress = require('./customer-address.model');
 const payment = require('./payment.model');
+const feedback = require('./feedback.model');
 
 module.exports = {
   product,
@@ -41,7 +42,8 @@ module.exports = {
   customer,
   customerOrder,
   customerOrderItem,
-  otp,
+  customerDeviceInfo,
   customerAddress,
   payment,
+  feedback,
 };
