@@ -1,1 +1,1 @@
-# ims_api
+# Inventory Management System - API
