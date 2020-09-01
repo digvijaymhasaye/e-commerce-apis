@@ -1,13 +1,39 @@
 const { successUtils } = require('../utils');
 const { customerOrderService } = require('../services');
-const { getId, getListValidation } = require('../validations');
+const { getId, getListValidation, initiateCustomerOrderValidation } = require('../validations');
+
+const getOrderStats = async (req, res, next) => {
+  try {
+    const stats = await customerOrderService.getOrderStats({
+      account_id: req.headers.account_id,
+    });
+    return successUtils.handler({ stats }, req, res);
+  } catch (error) {
+    return next(error);
+  }
+};
+
+const getAllCustomersOrder = async (req, res, next) => {
+  try {
+    const validatedQueryParams = await getListValidation.validate(req.query);
+    const orders = await customerOrderService.getOrders({
+      account_id: req.headers.account_id,
+      ...validatedQueryParams,
+    });
+    return successUtils.handler({ orders }, req, res);
+  } catch (error) {
+    return next(error);
+  }
+};
 
 const getOrderItemListByCustomerId = async (req, res, next) => {
+  const { customerId } = req.params;
   try {
+    const validCustomerId = await getId.validate(customerId);
     const validatedQueryParams = await getListValidation.validate(req.query);
     const orders = await customerOrderService.getOrderItemListByCustomerId({
       account_id: req.headers.account_id,
-      customer_id: req.headers.customer_id,
+      customer_id: validCustomerId,
       ...validatedQueryParams,
     });
     return successUtils.handler({ orders }, req, res);
@@ -29,12 +55,29 @@ const getCustomerOrders = async (req, res, next) => {
   }
 };
 
+const getCustomerOrderByOrderId = async (req, res, next) => {
+  try {
+    const { customerId, orderId } = req.params;
+    const validatedOrderId = await getId.validate(orderId);
+    const validatedCustomerId = await getId.validate(customerId);
+    const customerOrder = await customerOrderService.getOrderByCustomerIdOrderId({
+      account_id: req.headers.account_id,
+      customer_id: validatedCustomerId,
+      order_id: validatedOrderId,
+    });
+    return successUtils.handler({ customer_order: customerOrder }, req, res);
+  } catch (error) {
+    return next(error);
+  }
+};
+
 const initiateOrder = async (req, res, next) => {
   try {
+    const validOrderBody = await initiateCustomerOrderValidation.validate(req.body);
     const order = await customerOrderService.initiateOrder({
       account_id: req.headers.account_id,
       customer_id: req.headers.customer_id,
-      ...req.body,
+      ...validOrderBody,
     });
     return successUtils.handler({ order }, req, res);
   } catch (error) {
@@ -58,9 +101,32 @@ const finaliseOrder = async (req, res, next) => {
   }
 };
 
+const updateOrderStatusByOrderId = async (req, res, next) => {
+  try {
+    const { customerId, orderId, status } = req.params;
+
+    const validCustomerId = await getId.validate(customerId);
+    const validOrderId = await getId.validate(orderId);
+    const { status: validStatus } = await getListValidation.required().validate({ status });
+    const customerOrder = await customerOrderService.updateOrderStatusByOrderId({
+      account_id: req.headers.account_id,
+      customer_id: validCustomerId,
+      order_id: validOrderId,
+      status: validStatus,
+    });
+    return successUtils.handler({ customer_order: customerOrder }, req, res);
+  } catch (error) {
+    return next(error);
+  }
+};
+
 module.exports = {
+  getOrderStats,
+  getAllCustomersOrder,
   initiateOrder,
   finaliseOrder,
   getCustomerOrders,
   getOrderItemListByCustomerId,
+  getCustomerOrderByOrderId,
+  updateOrderStatusByOrderId,
 };

@@ -2,7 +2,8 @@ const { successUtils } = require('../utils');
 const {
   getId, getListValidation, userSignInValidation, addUserValidation, // updateNoteValidation,
 } = require('../validations');
-const { userService } = require('../services');
+const { userService, jwtService } = require('../services');
+const { USER_TYPE } = require('../consts');
 
 // const getListCount = async (req, res, next) => {
 //   try {
@@ -54,11 +55,17 @@ const signIn = async (req, res, next) => {
     const validatedReqData = await userSignInValidation.validate(reqBody);
     const user = await userService.signIn({
       account_id: req.headers.account_id,
-      user_agent: req.headers['user-agent'],
-      app_version: req.headers['app-version'],
       ...validatedReqData,
     });
-    return successUtils.handler({ user }, req, res);
+    const session = await jwtService.sign({
+      app_version: req.headers['app-version'],
+      user_type: USER_TYPE.USER,
+      device_info: req.headers['user-agent'],
+      device_token: 'abc',
+      user_id: user.id,
+    });
+    console.info(`Session - ${JSON.stringify(session)}`);
+    return successUtils.handler({ user, token: session.token }, req, res);
   } catch (err) {
     return next(err);
   }
@@ -72,7 +79,29 @@ const signUp = async (req, res, next) => {
       account_id: req.headers.account_id,
       ...validatedReqData,
     });
-    return successUtils.handler({ user }, req, res);
+
+    const session = await jwtService.sign({
+      app_version: req.headers['app-version'],
+      user_type: USER_TYPE.USER,
+      device_info: req.headers['user-agent'],
+      device_token: 'abc',
+      user_id: user.id,
+    });
+    console.info(`Session - ${JSON.stringify(session)}`);
+    return successUtils.handler({ user, token: session.token }, req, res);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+const signOut = async (req, res, next) => {
+  try {
+    await userService.signOut({
+      account_id: req.headers.account_id,
+      user_id: req.headers.user_id,
+      session_id: req.headers.session_id,
+    });
+    return successUtils.handler({ message: 'Ok' }, req, res);
   } catch (err) {
     return next(err);
   }
@@ -113,6 +142,7 @@ module.exports = {
   getOne,
   signIn,
   signUp,
+  signOut,
   // updateOne,
   // deleteOne,
 };

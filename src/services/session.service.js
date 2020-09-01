@@ -2,7 +2,7 @@ const { errorUtils } = require('../utils');
 const { SessionModel } = require('../managers/sequelize.manager');
 
 const addSession = async ({
-  user_type, user_id, device_info, app_version, token, device_token,
+  id, user_type, user_id, device_info, app_version, token, device_token,
 }) => {
   const existingSessionFromSameDevice = await SessionModel.findOne({
     where: {
@@ -16,6 +16,7 @@ const addSession = async ({
   }
 
   return SessionModel.create({
+    id,
     user_type,
     user_id,
     token,
@@ -43,15 +44,22 @@ const getSessionById = async (id) => {
 
   if (!session) {
     console.info(`Session not found. Session id - ${id}`);
-    errorUtils.throwNotFoundError('Session not found');
+    errorUtils.throwUnAuthorisedError('Session not found');
   }
 
   console.info(`Session Service - GetSessionById() - Session = ${JSON.stringify(session)}`);
   return session;
 };
 
+const getAllActiveSessions = async ({ account_id }) => SessionModel.findAll({
+  where: {
+    account_id,
+  },
+});
+
 module.exports = {
   addSession,
   deleteSession,
   getSessionById,
+  getAllActiveSessions,
 };

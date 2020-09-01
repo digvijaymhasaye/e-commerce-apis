@@ -14,14 +14,14 @@ const feedbackRoutes = require('./feedback.routes');
 const apiRoutes = express.Router();
 
 apiRoutes.use('/users', userRoutes);
-apiRoutes.use('/products', authoriser, productRoutes);
-apiRoutes.use('/categories', authoriser, categoryRoutes);
+apiRoutes.use('/products', productRoutes);
+apiRoutes.use('/categories', categoryRoutes);
 apiRoutes.use('/offers', authoriser, offerRoutes);
 apiRoutes.use('/images', imageRoutes);
 apiRoutes.use('/carts', cartRoutes);
 apiRoutes.use('/customers', customerRoutes);
 apiRoutes.use('/otp', otpRoutes);
-apiRoutes.use('/payments', paymentRoutes);
+apiRoutes.use('/payments', authoriser, paymentRoutes);
 apiRoutes.use('/feedbacks', feedbackRoutes);
 
 // apiRoutes.use('*', (req, res) => res.status(handlers.response.STATUS.NOT_FOUND)

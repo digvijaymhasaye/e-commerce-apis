@@ -2,9 +2,8 @@ const { STATUS } = require('../consts');
 
 module.exports = (sequelize, Sequelize) => sequelize.define('session', {
   id: {
-    type: Sequelize.INTEGER,
+    type: Sequelize.STRING(64),
     primaryKey: true,
-    autoIncrement: true,
   },
   user_type: {
     type: Sequelize.TINYINT(1),

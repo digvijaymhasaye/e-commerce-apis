@@ -23,6 +23,7 @@ const {
   customerAddress,
   payment,
   feedback,
+  unit,
 } = require('../models');
 const config = require('../config');
 
@@ -70,6 +71,7 @@ const CustomerDeviceInfoModel = customerDeviceInfo(sequelize, Sequelize);
 const CustomerAddressModel = customerAddress(sequelize, Sequelize);
 const PaymentModel = payment(sequelize, Sequelize);
 const FeedBackModel = feedback(sequelize, Sequelize);
+const UnitModel = unit(sequelize, Sequelize);
 
 CategoryModel.hasMany(ProductModel, { foreignKey: 'category_id' });
 ProductModel.belongsTo(CategoryModel, { foreignKey: 'category_id' });
@@ -77,8 +79,11 @@ ProductModel.belongsTo(CategoryModel, { foreignKey: 'category_id' });
 // OfferModel.hasOne(ProductModel, { foreignKey: 'type_id' });
 // ProductModel.belongsTo(OfferModel, { foreignKey: 'type_id' });
 
-ProductModel.belongsToMany(ImageModel, { through: ProductImageMapModel, foreignKey: 'id' });
-ImageModel.belongsToMany(ProductModel, { through: ProductImageMapModel, foreignKey: 'image_id' });
+ProductModel.belongsTo(ImageModel, { foreignKey: 'image_id' });
+ImageModel.hasOne(ProductModel, { foreignKey: 'image_id' });
+
+// ProductModel.belongsTo(UnitModel, { foreignKey: 'unit_id' });
+// UnitModel.hasOne(ProductModel, { foreignKey: 'unit_id' });
 
 CategoryModel.belongsTo(ImageModel, { foreignKey: 'image_id' });
 ImageModel.hasOne(CategoryModel, { foreignKey: 'image_id' });
@@ -98,8 +103,8 @@ UserGroupModel.belongsTo(CouponAudienceModel, { foreignKey: 'type_id' });
 CustomerModel.hasOne(CartModel, { foreignKey: 'customer_id' });
 CartModel.belongsTo(CustomerModel, { foreignKey: 'customer_id' });
 
-CustomerModel.hasMany(CustomerDeviceInfoModel, { foreignKey: 'customer_id' });
-CustomerDeviceInfoModel.belongsTo(CustomerModel, { foreignKey: 'customer_id' });
+// CustomerModel.hasMany(CustomerDeviceInfoModel, { foreignKey: 'customer_id' });
+// CustomerDeviceInfoModel.belongsTo(CustomerModel, { foreignKey: 'customer_id' });
 
 CartModel.hasMany(CartItemModel, { foreignKey: 'cart_id' });
 CartItemModel.belongsTo(CartModel, { foreignKey: 'cart_id' });
@@ -129,7 +134,7 @@ CustomerOrderModel.hasOne(PaymentModel, { foreignKey: 'order_id' });
 PaymentModel.belongsTo(CustomerOrderModel, { foreignKey: 'order_id' });
 
 CustomerModel.hasOne(PaymentModel, { foreignKey: 'payer_id' });
-PaymentModel.belongsTo(PaymentModel, { foreignKey: 'payer_id' });
+PaymentModel.belongsTo(CustomerModel, { foreignKey: 'payer_id' });
 
 module.exports = {
   sequelize,
@@ -156,4 +161,5 @@ module.exports = {
   CustomerAddressModel,
   PaymentModel,
   FeedBackModel,
+  UnitModel,
 };

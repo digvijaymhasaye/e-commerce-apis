@@ -281,7 +281,7 @@ const getInvoice = async ({ account_id, customer_id }) => {
   return invoice;
 };
 
-const disableCart = async ({account_id, customer_id, cart_id }) => {
+const disableCart = async ({ account_id, customer_id, cart_id }) => {
   const cart = await CartModel.findOne({
     where: {
       id: cart_id,

@@ -2,7 +2,8 @@ const { Op } = require('sequelize');
 const {
   CategoryModel, ImageModel,
 } = require('../managers').sequelizeManager;
-const { STATUS } = require('../consts');
+const { STATUS, TYPE } = require('../consts');
+const { addImage } = require('./image.service');
 
 const getListCount = async ({
   account_id, status, search, ids,
@@ -97,13 +98,23 @@ const getOne = async ({ id, account_id }) => {
 };
 
 const addOne = async ({
-  account_id, name, description, image_id,
-}) => CategoryModel.create({
-  account_id,
-  name,
-  description,
-  image_id,
-});
+  account_id, user_id, name, description, image,
+}) => {
+  const uploadedImage = await addImage({
+    account_id,
+    file: image,
+    type: TYPE.IMAGE_TYPE.CATEGORY,
+    user_id,
+  });
+
+  console.info(`Uploaded image ${JSON.stringify(uploadedImage)}`);
+  return CategoryModel.create({
+    account_id,
+    name,
+    description,
+    image_id: uploadedImage.id,
+  });
+};
 
 const enableOne = async ({ id, account_id }) => {
   const category = await getOne({ id, account_id });
@@ -132,7 +143,7 @@ const disableOne = async ({ id, account_id }) => {
 };
 
 const updateOne = async ({
-  id, account_id, name, description, image_id, enable,
+  id, account_id, user_id, name, description, image, enable,
 }) => {
   if (enable !== undefined) {
     if (enable) {
@@ -145,6 +156,17 @@ const updateOne = async ({
 
   const category = await getOne({ id, account_id });
 
+  let image_id;
+  if (image) {
+    const uploadedImage = await addImage({
+      account_id,
+      file: image,
+      type: TYPE.IMAGE_TYPE.CATEGORY,
+      user_id,
+    });
+
+    image_id = uploadedImage.id;
+  }
   category.name = name || category.name;
   category.description = description || category.description;
   category.image_id = image_id || category.image_id;

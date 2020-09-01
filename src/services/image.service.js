@@ -50,7 +50,7 @@ const getOne = async ({ id }) => {
   return image;
 };
 
-const addOne = async ({
+const addImage = async ({
   account_id, file, type, description, user_id, is_copy,
 }) => {
   const uploadedFile = await aws.upload({ file_path: file.path, owner_id: account_id });
@@ -80,6 +80,6 @@ module.exports = {
   getCount,
   getList,
   getOne,
-  addOne,
+  addImage,
   deleteOne,
 };

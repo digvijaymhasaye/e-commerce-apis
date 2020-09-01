@@ -1,10 +1,12 @@
 const { Op } = require('sequelize');
 const {
   ProductModel, CategoryModel, OfferModel, CouponModel,
-  ImageModel, ProductImageMapModel,
+  ImageModel, UnitModel,
 } = require('../managers').sequelizeManager;
-const { STATUS } = require('../consts');
+const { STATUS, TYPE } = require('../consts');
+const { errorUtils } = require('../utils');
 const { getOne: getCategory } = require('./category.service');
+const { addImage } = require('./image.service');
 
 const getListCount = async ({
   account_id, status, search, ids, category_id,
@@ -71,9 +73,6 @@ const getList = async ({
 
   const include = [{
     model: ImageModel,
-    through: {
-      attributes: [],
-    },
   }];
 
   if (include_category) {
@@ -117,9 +116,6 @@ const getOne = async ({ id, account_id }) => {
     },
     include: [{
       model: ImageModel,
-      through: {
-        attributes: [],
-      },
     }, {
       model: CategoryModel,
     }],
@@ -135,11 +131,24 @@ const getOne = async ({ id, account_id }) => {
 };
 
 const addOne = async ({
-  account_id, name, description, is_taxable, price, quantity, unit, category_id, base_quantity, image_ids,
+  account_id, user_id, name, description, is_taxable, price,
+  quantity, unit, category_id, base_quantity, file,
 }) => {
   await getCategory({ id: category_id, account_id });
 
-  const product = await ProductModel.create({
+  let image_id;
+  if (file) {
+    const uploadedImage = await addImage({
+      account_id,
+      file,
+      type: TYPE.IMAGE_TYPE.PRODUCT,
+      user_id,
+    });
+
+    image_id = uploadedImage.id;
+  }
+
+  return ProductModel.create({
     account_id,
     name,
     description,
@@ -149,26 +158,27 @@ const addOne = async ({
     unit,
     category_id,
     is_taxable,
+    image_id,
   });
 
-  const images = [];
+  // const images = [];
 
-  console.info(`1. Image ids => ${image_ids}`);
-  image_ids.forEach((eachImageId) => {
-    const image = {
-      product_id: product.id,
-      image_id: eachImageId,
-    };
-    console.info(`Each image object => ${JSON.stringify(image)}`);
-    images.push(image);
-    console.info(`Images after each iteration => ${JSON.stringify(images)}`);
-  });
+  // console.info(`1. Image ids => ${image_ids}`);
+  // image_ids.forEach((eachImageId) => {
+  //   const image = {
+  //     product_id: product.id,
+  //     image_id: eachImageId,
+  //   };
+  //   console.info(`Each image object => ${JSON.stringify(image)}`);
+  //   images.push(image);
+  //   console.info(`Images after each iteration => ${JSON.stringify(images)}`);
+  // });
 
-  console.info(`Images for product => ${JSON.stringify(images)}`);
+  // console.info(`Images for product => ${JSON.stringify(images)}`);
 
-  await ProductImageMapModel.bulkCreate(images);
+  // await ProductImageMapModel.bulkCreate(images);
 
-  return getOne({ id: product.id, account_id });
+  // return getOne({ id: product.id, account_id });
 };
 
 const enableOne = async ({ id, account_id }) => {
@@ -198,7 +208,7 @@ const disableOne = async ({ id, account_id }) => {
 };
 
 const updateOne = async ({
-  id, account_id, category_id, name, description, price, quantity, unit, is_taxable, enable, base_quantity,
+  id, account_id, user_id, category_id, name, description, price, quantity, unit_id, is_taxable, enable, base_quantity, file,
 }) => {
   if (enable !== undefined) {
     if (enable) {
@@ -211,14 +221,27 @@ const updateOne = async ({
 
   const product = await getOne({ id, account_id });
 
+  let image_id;
+  if (file) {
+    const uploadedImage = await addImage({
+      account_id,
+      file,
+      type: TYPE.IMAGE_TYPE.PRODUCT,
+      user_id,
+    });
+
+    image_id = uploadedImage.id;
+  }
+
   product.category_id = category_id || product.category_id;
   product.name = name || product.name;
   product.description = description || product.description;
   product.price = price || product.price;
   product.quantity = quantity || product.quantity;
   product.base_quantity = base_quantity || product.base_quantity;
-  product.unit = unit || product.unit;
+  product.unit_id = unit_id || product.unit_id;
   product.is_taxable = is_taxable || product.is_taxable;
+  product.image_id = image_id || product.image_id;
   return product.save();
 };
 

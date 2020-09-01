@@ -1,14 +1,56 @@
+const { Op } = require('sequelize');
 const { CustomerModel } = require('../managers').sequelizeManager;
 const { errorUtils } = require('../utils');
 const { sign } = require('./jwt.service');
 const { USER_TYPE } = require('../consts');
 const { deleteSession } = require('./session.service');
 
-const getOne = async ({ id }) => {
+const getCustomerList = async ({
+  account_id, page_no, page_size, sort_by, sort_order, status, search,
+}) => {
+  const limit = page_size;
+  const offset = (page_no - 1) * limit;
+
+  const where = {
+    account_id,
+  };
+
+  if (status) {
+    where.status = status;
+  }
+
+  if (search) {
+    where[[Op.or]] = [{
+      first_name: {
+        [Op.like]: `%${search}%`,
+      },
+    }, {
+      last_name: {
+        [Op.like]: `%${search}%`,
+      },
+    }, {
+      email_id: {
+        [Op.like]: `%${search}%`,
+      },
+    }];
+  }
+
+  const order = [[sort_by, sort_order]];
+
+  return CustomerModel.findAll({
+    where,
+    order,
+    limit,
+    offset,
+  });
+};
+
+const getOne = async ({ account_id, id }) => {
   console.info(`Customer.service -- getOne() -- id = ${id}`);
   const customer = await CustomerModel.findOne({
     where: {
       id,
+      account_id,
     },
   });
 
@@ -101,6 +143,7 @@ const signOut = async ({ account_id, customer_id, session_id }) => deleteSession
 });
 
 module.exports = {
+  getCustomerList,
   getOne,
   signUp,
   signIn,
