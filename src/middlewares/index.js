@@ -23,7 +23,7 @@ const authoriser = async (req, res, next) => {
     await sessionService.getSessionById(userDecodedData.session_id);
     console.info(`Authoriser - User Type = ${userDecodedData.user_type}`);
     const validateUser = userDecodedData.user_type === USER_TYPE.USER ? userService.getOne : customerService.getOne;
-    const user = await validateUser({ id: userDecodedData.user_id });
+    const user = await validateUser({ account_id: userDecodedData.account_id, id: userDecodedData.user_id });
     console.info(`Authoriser - User = ${JSON.stringify(user)}`);
     req.headers.user_id = userDecodedData.user_id;
     req.headers.session_id = userDecodedData.session_id;

@@ -1,11 +1,12 @@
 const { Op } = require('sequelize');
 const {
   ProductModel, CategoryModel, OfferModel, CouponModel,
-  ImageModel, UnitModel,
+  ImageModel,
 } = require('../managers').sequelizeManager;
 const { STATUS, TYPE } = require('../consts');
-const { errorUtils } = require('../utils');
+const { errorUtils, pushNotificationTemplate } = require('../utils');
 const { getOne: getCategory } = require('./category.service');
+const { sendToAdmins } = require('./notification.service');
 const { addImage } = require('./image.service');
 
 const getListCount = async ({
@@ -256,17 +257,26 @@ const deleteOne = async ({ id, account_id }) => {
 
 const updateProductQuantityAfterOrder = async ({ account_id, products }) => {
   const productsBulkBody = [];
+  let remainingStockPercentile = 0;
 
-  products.forEach((eachProduct) => {
+  products.forEach(async (eachProduct) => {
     const product = {
       account_id,
       category_id: 0,
-      name: '',
+      name: eachProduct.product.name,
       price: 0,
+      unit: '',
       base_quantity: 0,
       id: eachProduct.product_id,
       quantity: eachProduct.product.quantity - eachProduct.quantity,
     };
+
+    remainingStockPercentile = ((10 * eachProduct.product.quantity) / 100);
+    console.info(`-----------------------------> Remaining stock percentile = ${remainingStockPercentile}`);
+    if (remainingStockPercentile > product.quantity) {
+      const notification = pushNotificationTemplate.create(TYPE.NOTIFICATIONS.TITLE.CRITICAL_PRODUCT_STORAGE, null, { product: eachProduct.product });
+      await sendToAdmins({ account_id, title: notification.title, message: notification.message });
+    }
 
     productsBulkBody.push(product);
   });

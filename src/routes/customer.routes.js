@@ -6,10 +6,11 @@ const { customerController } = require('../controllers');
 
 const customerRoutes = express.Router({ mergeParams: true });
 
-customerRoutes.use('/:customerId/addresses', customerAddressRoutes);
-customerRoutes.use('/orders', customerOrderRoutes);
+customerRoutes.use('/:customerId/addresses', authoriser, customerAddressRoutes);
+customerRoutes.use('/orders', authoriser, customerOrderRoutes);
 customerRoutes.use('/:customerId/orders', customerOrderRoutes);
-// customerRoutes.get('/count', customerController.getListCount);
+customerRoutes.get('/stats', authoriser, customerController.getCustomerStats);
+customerRoutes.get('/count', customerController.getListCount);
 customerRoutes.get('/', customerController.getList);
 customerRoutes.get('/:customerId', customerController.getCustomer);
 customerRoutes.post('/sign-up', customerController.signUp);

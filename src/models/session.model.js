@@ -5,6 +5,10 @@ module.exports = (sequelize, Sequelize) => sequelize.define('session', {
     type: Sequelize.STRING(64),
     primaryKey: true,
   },
+  account_id: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+  },
   user_type: {
     type: Sequelize.TINYINT(1),
     allowNull: false,

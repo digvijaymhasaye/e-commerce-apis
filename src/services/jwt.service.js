@@ -16,6 +16,7 @@ const sign = async (payload) => {
   const accessToken = jwt.sign(reformattedPayload, config.AUTH_KEY, { expiresIn: '30d' });
   const session = await addSession({
     id: sessionId,
+    account_id: payload.account_id,
     user_id: payload.user_id,
     user_type: payload.user_type,
     device_info: payload.device_info,

@@ -22,7 +22,7 @@ apiRoutes.use('/carts', cartRoutes);
 apiRoutes.use('/customers', customerRoutes);
 apiRoutes.use('/otp', otpRoutes);
 apiRoutes.use('/payments', authoriser, paymentRoutes);
-apiRoutes.use('/feedbacks', feedbackRoutes);
+apiRoutes.use('/feedbacks', authoriser, feedbackRoutes);
 
 // apiRoutes.use('*', (req, res) => res.status(handlers.response.STATUS.NOT_FOUND)
 //   .send(handlers.response.getErrorPayload('Route Not Found', handlers.response.STATUS.NOT_FOUND)));

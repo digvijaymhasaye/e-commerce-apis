@@ -71,6 +71,8 @@ const initiatePayment = async (req, res, next) => {
 };
 
 const capturePayment = async (req, res, next) => {
+  console.info(`capture payment-> headers -> ${JSON.stringify(req.headers)}`);
+  console.info(`capture payment-> params -> ${JSON.stringify(req.params)}`);
   const { paymentId } = req.params;
   try {
     const validatedPaymentId = await getId.validate(paymentId);

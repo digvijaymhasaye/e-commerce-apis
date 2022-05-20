@@ -1,6 +1,7 @@
 const { successUtils } = require('../utils');
 const {
-  getId, getListValidation, userSignInValidation, addUserValidation, // updateNoteValidation,
+  getId, getListValidation, userSignInValidation, addUserValidation, updateUserValidation,
+  changePasswordValidation,
 } = require('../validations');
 const { userService, jwtService } = require('../services');
 const { USER_TYPE } = require('../consts');
@@ -58,10 +59,11 @@ const signIn = async (req, res, next) => {
       ...validatedReqData,
     });
     const session = await jwtService.sign({
+      account_id: req.headers.account_id,
       app_version: req.headers['app-version'],
       user_type: USER_TYPE.USER,
       device_info: req.headers['user-agent'],
-      device_token: 'abc',
+      device_token: 'abc', // req.headers.device_token,
       user_id: user.id,
     });
     console.info(`Session - ${JSON.stringify(session)}`);
@@ -81,6 +83,7 @@ const signUp = async (req, res, next) => {
     });
 
     const session = await jwtService.sign({
+      account_id: req.headers.account_id,
       app_version: req.headers['app-version'],
       user_type: USER_TYPE.USER,
       device_info: req.headers['user-agent'],
@@ -107,21 +110,35 @@ const signOut = async (req, res, next) => {
   }
 };
 
-// const updateOne = async (req, res, next) => {
-//   const { userId } = req.params;
-//   const reqBody = req.body;
-//   try {
-//     const id = await getId.validate(userId);
-//     const validatedReqData = await updateNoteValidation.validate(reqBody);
-//     const user = await userService.updateOne({
-//       id,
-//       ...validatedReqData,
-//     });
-//     return successUtils.handler({ user }, req, res);
-//   } catch (err) {
-//     return next(err);
-//   }
-// };
+const changePassword = async (req, res, next) => {
+  const reqBody = req.body;
+  try {
+    const validatedReqData = await changePasswordValidation.validate(reqBody);
+    const user = await userService.changePassword({
+      account_id: req.headers.account_id,
+      user_id: req.headers.user_id,
+      ...validatedReqData,
+    });
+    return successUtils.handler({ user }, req, res);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+const updateOne = async (req, res, next) => {
+  const reqBody = req.body;
+  try {
+    const validatedReqData = await updateUserValidation.validate(reqBody);
+    const user = await userService.updateDetails({
+      account_id: req.headers.account_id,
+      user_id: req.headers.user_id,
+      ...validatedReqData,
+    });
+    return successUtils.handler({ user }, req, res);
+  } catch (err) {
+    return next(err);
+  }
+};
 
 // const deleteOne = async (req, res, next) => {
 //   const { userId } = req.params;
@@ -143,6 +160,7 @@ module.exports = {
   signIn,
   signUp,
   signOut,
-  // updateOne,
+  changePassword,
+  updateOne,
   // deleteOne,
 };

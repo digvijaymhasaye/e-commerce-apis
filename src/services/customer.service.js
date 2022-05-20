@@ -1,10 +1,76 @@
-const { Op } = require('sequelize');
+const sequelize = require('sequelize');
 const { CustomerModel } = require('../managers').sequelizeManager;
 const { errorUtils } = require('../utils');
 const { sign } = require('./jwt.service');
 const { USER_TYPE } = require('../consts');
 const { deleteSession } = require('./session.service');
 
+const { Op } = sequelize;
+
+const getCustomerStats = async ({ account_id }) => {
+  const stats = {};
+
+  const totalCustomers = await CustomerModel.count({
+    where: {
+      account_id,
+    },
+  });
+
+  stats.total_customers = totalCustomers;
+
+  const currentDateTime = new Date();
+
+  let dateWeekAgo = currentDateTime;
+  dateWeekAgo.setDate(currentDateTime.getDate() - 7);
+  // eslint-disable-next-line prefer-destructuring
+  dateWeekAgo = dateWeekAgo.toISOString().split('T')[0];
+
+  const weeklyNewCustomers = await CustomerModel.count({
+    where: {
+      account_id,
+      created_at: {
+        [Op.gte]: dateWeekAgo,
+      },
+    },
+  });
+
+  stats.weekly_new_customers = weeklyNewCustomers ? weeklyNewCustomers.dataValues.weekly_payment : 0;
+
+
+  return stats;
+};
+
+const getCustomerListCount = async ({
+  account_id, status, search,
+}) => {
+  const where = {
+    account_id,
+  };
+
+  if (status) {
+    where.status = status;
+  }
+
+  if (search) {
+    where[[Op.or]] = [{
+      first_name: {
+        [Op.like]: `%${search}%`,
+      },
+    }, {
+      last_name: {
+        [Op.like]: `%${search}%`,
+      },
+    }, {
+      email_id: {
+        [Op.like]: `%${search}%`,
+      },
+    }];
+  }
+
+  return CustomerModel.count({
+    where,
+  });
+};
 const getCustomerList = async ({
   account_id, page_no, page_size, sort_by, sort_order, status, search,
 }) => {
@@ -87,6 +153,7 @@ const signIn = async ({
   // }
 
   const session = await sign({
+    account_id,
     app_version,
     user_type: USER_TYPE.CUSTOMER,
     device_info: user_agent,
@@ -124,6 +191,7 @@ const signUp = async ({
   });
 
   const session = await sign({
+    account_id,
     app_version,
     device_token,
     user_type: USER_TYPE.CUSTOMER,
@@ -143,6 +211,8 @@ const signOut = async ({ account_id, customer_id, session_id }) => deleteSession
 });
 
 module.exports = {
+  getCustomerStats,
+  getCustomerListCount,
   getCustomerList,
   getOne,
   signUp,

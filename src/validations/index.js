@@ -16,6 +16,8 @@ const capturePaymentValidation = require('./capture-payment.validation');
 const addFeedbackValidation = require('./add-feedback.validation');
 const customerSignInValidation = require('./customer-sign-in.validation');
 const initiateCustomerOrderValidation = require('./initiate-customer-order.validation');
+const changePasswordValidation = require('./change-password.validation');
+const updateUserValidation = require('./update-user.validation');
 
 module.exports = {
   getListValidation,
@@ -36,4 +38,6 @@ module.exports = {
   addFeedbackValidation,
   customerSignInValidation,
   initiateCustomerOrderValidation,
+  changePasswordValidation,
+  updateUserValidation,
 };

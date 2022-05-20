@@ -37,7 +37,8 @@ const getAddress = async (req, res, next) => {
   try {
     // const validatedAddressId = await getId.validate(addressId);
     const customerAddress = await customerAddressService.getAddress({
-      account_id: req.headers.address_id,
+      account_id: req.headers.account_id,
+      // account_id: req.headers.address_id,
       customer_id: req.headers.customer_id,
       // address_id: validatedAddressId,
     });

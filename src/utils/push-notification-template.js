@@ -1,6 +1,6 @@
 const { TYPE } = require('../consts');
 
-const createNotificationForNewOrder = async (content) => {
+const createNotificationForNewOrder = (content) => {
   const notification = {
     title: 'New order received',
     message: `New order received from ${content.customer.first_name} ${content.customer.last_name}.\n Ordered items:\n`,
@@ -21,6 +21,13 @@ const createNotificationForOrderDelivered = async () => {
 
 };
 
+const createNotificationForCriticalStorage = (content) => {
+  return {
+    title: TYPE.NOTIFICATIONS.TITLE.CRITICAL_PRODUCT_STORAGE,
+    message: `${content.product.name} has less than 10% quantity left.\nQuantity left: ${content.product.quantity}`,
+  };
+};
+
 /**
  *
  * @param {Number} titleType
@@ -30,11 +37,14 @@ const createNotificationForOrderDelivered = async () => {
 const create = (titleType, contentType, content) => {
   let notification;
   switch (titleType) {
-    case TYPE.NOTIFICATIONS.TITLE.NEW_ORDER:
+    case 'NEW_ORDER':
       notification = createNotificationForNewOrder(content);
       break;
-    case TYPE.NOTIFICATIONS.TITLE.ORDER_UPDATE:
+    case 'ORDER_UPDATE':
       notification = createNotificationForOrderUpdate(content);
+      break;
+    case 'CRITICAL_PRODUCT_STORAGE':
+      notification = createNotificationForCriticalStorage(content);
       break;
     default:
       break;

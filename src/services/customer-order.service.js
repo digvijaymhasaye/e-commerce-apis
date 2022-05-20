@@ -159,9 +159,6 @@ const getOrderItemListByCustomerId = async ({
     },
     include: {
       model: ImageModel,
-      through: {
-        attributes: [],
-      },
     },
   }, {
     model: CustomerOrderModel,
@@ -203,6 +200,8 @@ const initiateOrder = async ({
     errorUtils.throwPreconditionFailed('Cart is empty');
   }
   const cartId = cartItems[0].cart_id;
+
+  // TODO Add check for sufficient quantity available in stock
 
   const invoice = await getInvoice({ account_id, customer_id });
 
@@ -272,8 +271,8 @@ const finaliseOrder = async ({
     account_id, customer_id, page_no: 1, page_size: 100, sort_by: 'created_at', sort_order: 'desc',
   });
 
-  const notification = await pushNotificationTemplate.create(TYPE.NOTIFICATIONS.TITLE.NEW_ORDER, null, { orderItems, customer });
-
+  const notification = await pushNotificationTemplate.create('NEW_ORDER', null, { orderItems, customer });
+  console.info(notification);
   await sendToAdmins({ account_id, title: notification.title, message: notification.message });
 
   return order;
@@ -290,6 +289,15 @@ const updateOrderStatusByOrderId = async ({
   return order.save();
 };
 
+const updateOrderedProduct = async ({
+  account_id, customer_id, order_id, product_id, quantity,
+}) => {
+  // 1. Find order
+  // 2. find ordered product
+  // 3. update quantity
+  // 4. return ordered product
+};
+
 module.exports = {
   getOrderStats,
   getOrders,
@@ -300,4 +308,5 @@ module.exports = {
   finaliseOrder,
   getOrderByCustomerIdOrderId,
   updateOrderStatusByOrderId,
+  updateOrderedProduct,
 };

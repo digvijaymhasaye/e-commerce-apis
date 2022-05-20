@@ -1,6 +1,9 @@
 const { successUtils } = require('../utils');
 const { customerOrderService } = require('../services');
-const { getId, getListValidation, initiateCustomerOrderValidation } = require('../validations');
+const {
+  getId, getListValidation, initiateCustomerOrderValidation,
+  updateOrderedProductValidation,
+} = require('../validations');
 
 const getOrderStats = async (req, res, next) => {
   try {
@@ -86,6 +89,8 @@ const initiateOrder = async (req, res, next) => {
 };
 
 const finaliseOrder = async (req, res, next) => {
+  console.info(`finalise orders-> headers -> ${JSON.stringify(req.headers)}`);
+  console.info(`finalise orders-> params -> ${JSON.stringify(req.params)}`);
   const { orderId } = req.params;
   try {
     const validatedOrderId = await getId.validate(orderId);
@@ -120,6 +125,25 @@ const updateOrderStatusByOrderId = async (req, res, next) => {
   }
 };
 
+const updateOrderedProduct = async (req, res, next) => {
+  const { orderId, productId } = req.params;
+  try {
+    const validOrderId = await getId.validate(orderId);
+    const validProductId = await getId.validate(productId);
+    const validReqBody = await updateOrderedProductValidation.validate(req.body);
+    const orderedProduct = await customerOrderService.updateOrderedProduct({
+      account_id: req.headers.account_id,
+      customer_id: req.headers.customer_id,
+      order_id: validOrderId,
+      product_id: validProductId,
+      ...validReqBody,
+    });
+    return successUtils.handler({ product: orderedProduct }, req, res);
+  } catch (error) {
+    return next(error);
+  }
+};
+
 module.exports = {
   getOrderStats,
   getAllCustomersOrder,
@@ -129,4 +153,5 @@ module.exports = {
   getOrderItemListByCustomerId,
   getCustomerOrderByOrderId,
   updateOrderStatusByOrderId,
+  updateOrderedProduct,
 };

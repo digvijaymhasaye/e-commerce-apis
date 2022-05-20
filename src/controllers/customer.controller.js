@@ -4,17 +4,29 @@ const {
 } = require('../validations');
 const { customerService } = require('../services');
 
-// const getListCount = async (req, res, next) => {
-//   try {
-//     const validatedReqData = await getListValidation.validate(req.query);
-//     const count = await userService.getListCount({
-//       ...validatedReqData,
-//     });
-//     return successUtils.handler({ count }, req, res);
-//   } catch (err) {
-//     return next(err);
-//   }
-// };
+const getCustomerStats = async (req, res, next) => {
+  try {
+    const stats = await customerService.getCustomerStats({
+      account_id: req.headers.account_id,
+    });
+    return successUtils.handler({ stats }, req, res);
+  } catch (error) {
+    return next(error);
+  }
+};
+
+const getListCount = async (req, res, next) => {
+  try {
+    const validatedReqData = await getListValidation.validate(req.query);
+    const count = await customerService.getCustomerListCount({
+      account_id: req.headers.account_id,
+      ...validatedReqData,
+    });
+    return successUtils.handler({ count }, req, res);
+  } catch (err) {
+    return next(err);
+  }
+};
 
 const getList = async (req, res, next) => {
   const reqData = { ...req.query };
@@ -93,6 +105,7 @@ const signOut = async (req, res, next) => {
   }
 };
 
+
 // const updateOne = async (req, res, next) => {
 //   const { userId } = req.params;
 //   const reqBody = req.body;
@@ -123,7 +136,8 @@ const signOut = async (req, res, next) => {
 // };
 
 module.exports = {
-  // getListCount,
+  getCustomerStats,
+  getListCount,
   getList,
   getCustomer,
   signIn,

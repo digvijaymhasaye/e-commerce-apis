@@ -9,8 +9,9 @@ userRoutes.post('/', userController.signUp);
 userRoutes.post('/sign-in', userController.signIn);
 userRoutes.post('/sign-out', authoriser, userController.signOut);
 // userRoutes.get('/count', userController.getListCount);
-userRoutes.get('/:userId/', userController.getOne);
-// userRoutes.put('/:userId/', userController.updateOne);
+userRoutes.get('/', authoriser, userController.getOne);
+userRoutes.put('/', authoriser, userController.updateOne);
+userRoutes.put('/passwords', authoriser, userController.changePassword);
 // // noteRoutes.delete('/:userId/', userController.deleteOne);
 
 module.exports = userRoutes;

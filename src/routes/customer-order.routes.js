@@ -5,6 +5,7 @@ const customerOrderRoutes = express.Router({ mergeParams: true });
 
 customerOrderRoutes.get('/products/count', customerOrderController.getOrderItemListByCustomerId);
 customerOrderRoutes.get('/products', customerOrderController.getOrderItemListByCustomerId);
+customerOrderRoutes.put('/:orderId/products/:productId', customerOrderController.updateOrderedProduct);
 
 customerOrderRoutes.get('/stats', customerOrderController.getOrderStats);
 customerOrderRoutes.get('/', customerOrderController.getAllCustomersOrder);

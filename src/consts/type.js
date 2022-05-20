@@ -9,6 +9,7 @@ module.exports = {
     TITLE: {
       NEW_ORDER: '',
       ORDER_UPDATE: '',
+      CRITICAL_PRODUCT_STORAGE: 'Critical storage',
     },
     CONTENT: {
       NEW_ORDER: '',
