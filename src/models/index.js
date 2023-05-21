@@ -21,6 +21,7 @@ const customerDeviceInfo = require('./customer-device-info.model');
 const customerAddress = require('./customer-address.model');
 const payment = require('./payment.model');
 const feedback = require('./feedback.model');
+const unit = require('./unit.model');
 
 module.exports = {
   product,
@@ -46,4 +47,5 @@ module.exports = {
   customerAddress,
   payment,
   feedback,
+  unit,
 };

@@ -1,8 +1,10 @@
 const { successUtils } = require('../utils');
 const {
-  getId, getListValidation, userSignInValidation, addUserValidation, // updateNoteValidation,
+  getId, getListValidation, userSignInValidation, addUserValidation, updateUserValidation,
+  changePasswordValidation,
 } = require('../validations');
-const { userService } = require('../services');
+const { userService, jwtService } = require('../services');
+const { USER_TYPE } = require('../consts');
 
 // const getListCount = async (req, res, next) => {
 //   try {
@@ -54,11 +56,18 @@ const signIn = async (req, res, next) => {
     const validatedReqData = await userSignInValidation.validate(reqBody);
     const user = await userService.signIn({
       account_id: req.headers.account_id,
-      user_agent: req.headers['user-agent'],
-      app_version: req.headers['app-version'],
       ...validatedReqData,
     });
-    return successUtils.handler({ user }, req, res);
+    const session = await jwtService.sign({
+      account_id: req.headers.account_id,
+      app_version: req.headers['app-version'],
+      user_type: USER_TYPE.USER,
+      device_info: req.headers['user-agent'],
+      device_token: 'abc', // req.headers.device_token,
+      user_id: user.id,
+    });
+    console.info(`Session - ${JSON.stringify(session)}`);
+    return successUtils.handler({ user, token: session.token }, req, res);
   } catch (err) {
     return next(err);
   }
@@ -72,27 +81,64 @@ const signUp = async (req, res, next) => {
       account_id: req.headers.account_id,
       ...validatedReqData,
     });
+
+    const session = await jwtService.sign({
+      account_id: req.headers.account_id,
+      app_version: req.headers['app-version'],
+      user_type: USER_TYPE.USER,
+      device_info: req.headers['user-agent'],
+      device_token: 'abc',
+      user_id: user.id,
+    });
+    console.info(`Session - ${JSON.stringify(session)}`);
+    return successUtils.handler({ user, token: session.token }, req, res);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+const signOut = async (req, res, next) => {
+  try {
+    await userService.signOut({
+      account_id: req.headers.account_id,
+      user_id: req.headers.user_id,
+      session_id: req.headers.session_id,
+    });
+    return successUtils.handler({ message: 'Ok' }, req, res);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+const changePassword = async (req, res, next) => {
+  const reqBody = req.body;
+  try {
+    const validatedReqData = await changePasswordValidation.validate(reqBody);
+    const user = await userService.changePassword({
+      account_id: req.headers.account_id,
+      user_id: req.headers.user_id,
+      ...validatedReqData,
+    });
     return successUtils.handler({ user }, req, res);
   } catch (err) {
     return next(err);
   }
 };
 
-// const updateOne = async (req, res, next) => {
-//   const { userId } = req.params;
-//   const reqBody = req.body;
-//   try {
-//     const id = await getId.validate(userId);
-//     const validatedReqData = await updateNoteValidation.validate(reqBody);
-//     const user = await userService.updateOne({
-//       id,
-//       ...validatedReqData,
-//     });
-//     return successUtils.handler({ user }, req, res);
-//   } catch (err) {
-//     return next(err);
-//   }
-// };
+const updateOne = async (req, res, next) => {
+  const reqBody = req.body;
+  try {
+    const validatedReqData = await updateUserValidation.validate(reqBody);
+    const user = await userService.updateDetails({
+      account_id: req.headers.account_id,
+      user_id: req.headers.user_id,
+      ...validatedReqData,
+    });
+    return successUtils.handler({ user }, req, res);
+  } catch (err) {
+    return next(err);
+  }
+};
 
 // const deleteOne = async (req, res, next) => {
 //   const { userId } = req.params;
@@ -113,6 +159,8 @@ module.exports = {
   getOne,
   signIn,
   signUp,
-  // updateOne,
+  signOut,
+  changePassword,
+  updateOne,
   // deleteOne,
 };

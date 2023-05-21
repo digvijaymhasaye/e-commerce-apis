@@ -36,6 +36,10 @@ module.exports = (sequelize, Sequelize) => sequelize.define('customer_order', {
     type: Sequelize.INTEGER,
     defaultValue: 1,
   },
+  payment_type: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+  },
   notes: {
     type: Sequelize.STRING(255),
     allowNull: true,

@@ -4,6 +4,6 @@ module.exports = {
   RECEIVED: 2,
   OUT_FOR_DELIVERY: 3,
   DELIVERED: 4,
-  FAILED: 5,
-  CANCELLED: 6,
+  CANCELLED: 5,
+  FAILED: 6,
 };

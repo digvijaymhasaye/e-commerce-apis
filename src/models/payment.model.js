@@ -23,7 +23,13 @@ module.exports = (sequelize, Sequelize) => sequelize.define('payment', {
     type: Sequelize.INTEGER,
     allowNull: false,
   },
+  rzp_payment_method: {
+    type: Sequelize.STRING(16),
+  },
   rzp_order_id: {
+    type: Sequelize.STRING(40),
+  },
+  rzp_payment_id: {
     type: Sequelize.STRING(40),
   },
   entity: {

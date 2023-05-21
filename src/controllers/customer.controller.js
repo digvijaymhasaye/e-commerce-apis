@@ -4,42 +4,54 @@ const {
 } = require('../validations');
 const { customerService } = require('../services');
 
-// const getListCount = async (req, res, next) => {
-//   try {
-//     const validatedReqData = await getListValidation.validate(req.query);
-//     const count = await userService.getListCount({
-//       ...validatedReqData,
-//     });
-//     return successUtils.handler({ count }, req, res);
-//   } catch (err) {
-//     return next(err);
-//   }
-// };
-
-// const getList = async (req, res, next) => {
-//   const reqData = { ...req.query };
-//   if (reqData.ids) {
-//     reqData.ids = reqData.ids.split(';');
-//   }
-//   try {
-//     const validatedReqData = await getListValidation.validate(reqData);
-//     const users = await userService.getList({
-//       ...validatedReqData,
-//     });
-//     return successUtils.handler({ users }, req, res);
-//   } catch (err) {
-//     return next(err);
-//   }
-// };
-
-const getOne = async (req, res, next) => {
-  const { userId } = req.params;
+const getCustomerStats = async (req, res, next) => {
   try {
-    const id = await getId.validate(userId);
+    const stats = await customerService.getCustomerStats({
+      account_id: req.headers.account_id,
+    });
+    return successUtils.handler({ stats }, req, res);
+  } catch (error) {
+    return next(error);
+  }
+};
+
+const getListCount = async (req, res, next) => {
+  try {
     const validatedReqData = await getListValidation.validate(req.query);
+    const count = await customerService.getCustomerListCount({
+      account_id: req.headers.account_id,
+      ...validatedReqData,
+    });
+    return successUtils.handler({ count }, req, res);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+const getList = async (req, res, next) => {
+  const reqData = { ...req.query };
+  if (reqData.ids) {
+    reqData.ids = reqData.ids.split(';');
+  }
+  try {
+    const validatedReqData = await getListValidation.validate(reqData);
+    const customers = await customerService.getCustomerList({
+      account_id: req.headers.account_id,
+      ...validatedReqData,
+    });
+    return successUtils.handler({ customers }, req, res);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+const getCustomer = async (req, res, next) => {
+  const { customerId } = req.params;
+  try {
+    const id = await getId.validate(customerId);
     const customer = await customerService.getOne({
       id,
-      ...validatedReqData,
+      account_id: req.headers.account_id,
     });
     return successUtils.handler({ customer }, req, res);
   } catch (err) {
@@ -93,6 +105,7 @@ const signOut = async (req, res, next) => {
   }
 };
 
+
 // const updateOne = async (req, res, next) => {
 //   const { userId } = req.params;
 //   const reqBody = req.body;
@@ -123,9 +136,10 @@ const signOut = async (req, res, next) => {
 // };
 
 module.exports = {
-  // getListCount,
-  // getList,
-  getOne,
+  getCustomerStats,
+  getListCount,
+  getList,
+  getCustomer,
   signIn,
   signUp,
   signOut,

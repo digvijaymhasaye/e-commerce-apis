@@ -7,8 +7,6 @@ info:
     url: colons.in
     email: digvijaymhasaye8@gmail.com
 servers:
-  # - url: 'http://52.66.77.121:10010'
-  #   description: Dev
   - url: 'http://localhost:10010'
     description: Local
 paths:
@@ -69,6 +67,12 @@ paths:
         - schema:
             type: integer
             default: 1
+          in: header
+          name: session_id
+          required: true
+        - schema:
+            type: integer
+            default: 1
           in: query
           name: page_no
         - schema:
@@ -121,7 +125,7 @@ paths:
       description: This API will add new product
       requestBody:
         content:
-          application/json:
+          multipart/form-data:
             schema:
               $ref: '#/components/schemas/AddUpdateProductModel'
       parameters:
@@ -218,6 +222,12 @@ paths:
             default: 1
           in: header
           name: user_id
+          required: true
+        - schema:
+            type: integer
+            default: 1
+          in: header
+          name: session_id
           required: true
       description: This API will return list of categories
       tags:
@@ -865,12 +875,6 @@ paths:
     post:
       summary: ''
       operationId: post-customers-sign-in
-      parameters:
-        - name: account_id
-          in: header
-          schema:
-            type: integer
-          required: true
       responses:
         '200':
           description: OK
@@ -1142,6 +1146,9 @@ components:
       title: AddUpdateProductModel
       type: object
       properties:
+        image:
+          type: string
+          format: binary
         name:
           type: string
         description:
@@ -1157,10 +1164,8 @@ components:
           type: integer
         base_quantity:
           type: integer
-        image_ids:
-          type: array
-          items:
-            type: integer
+        image_id:
+          type: integer
     AddCartItemModel:
       title: AddCartItemModel
       type: object

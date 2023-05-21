@@ -5,4 +5,15 @@ module.exports = {
     OFFER: 3,
     COUPON: 4,
   },
+  NOTIFICATIONS: {
+    TITLE: {
+      NEW_ORDER: '',
+      ORDER_UPDATE: '',
+      CRITICAL_PRODUCT_STORAGE: 'Critical storage',
+    },
+    CONTENT: {
+      NEW_ORDER: '',
+      ORDER_UPDATE: '',
+    },
+  },
 };

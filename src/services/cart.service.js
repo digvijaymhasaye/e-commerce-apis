@@ -59,9 +59,6 @@ const getProducts = async ({ customer_id }) => {
       },
       include: {
         model: ImageModel,
-        through: {
-          attributes: [],
-        },
       },
     }, {
       model: CartModel,
@@ -97,9 +94,6 @@ const getProduct = async ({ account_id, customer_id, product_id }) => {
       },
       include: {
         model: ImageModel,
-        through: {
-          attributes: [],
-        },
       },
     }, {
       model: CartModel,
@@ -234,9 +228,6 @@ const removeCartProduct = async ({ account_id, customer_id, product_id }) => {
       },
       include: {
         model: ImageModel,
-        through: {
-          attributes: [],
-        },
       },
     }, {
       model: CartModel,
@@ -281,7 +272,7 @@ const getInvoice = async ({ account_id, customer_id }) => {
   return invoice;
 };
 
-const disableCart = async ({account_id, customer_id, cart_id }) => {
+const disableCart = async ({ account_id, customer_id, cart_id }) => {
   const cart = await CartModel.findOne({
     where: {
       id: cart_id,

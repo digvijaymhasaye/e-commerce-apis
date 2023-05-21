@@ -29,7 +29,7 @@ const getAddressList = async ({
 };
 
 const getAddress = async ({ account_id, customer_id }) => {
-  await getCustomer({ id: customer_id });
+  await getCustomer({ id: customer_id, account_id });
 
   const address = await CustomerAddressModel.findOne({
     where: {

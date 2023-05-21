@@ -3,7 +3,7 @@ const {
   UserModel,
 } = require('../managers').sequelizeManager;
 const { errorUtils } = require('../utils');
-const { sign } = require('./jwt.service');
+const { deleteSession } = require('./session.service');
 const { USER_TYPE } = require('../consts');
 
 const SALT_ROUNDS = 10;
@@ -43,22 +43,20 @@ const findByEmailId = async (email_id) => {
  * @param {*} param0
  */
 const signIn = async ({
-  email_id, password, app_version, user_agent,
+  email_id, password,
 }) => {
   const user = await findByEmailId(email_id);
 
   const result = bcrypt.compareSync(password, user.hash);
 
+  const salt = bcrypt.genSaltSync(SALT_ROUNDS);
+  const hash = bcrypt.hashSync(password, salt);
+  console.info(salt);
+  console.info(hash);
+  console.info(JSON.stringify(user));
   if (!result) {
     return errorUtils.throwForbiddenError('Invalid password');
   }
-
-  const session = await sign({
-    app_version,
-    user_type: USER_TYPE.USER,
-    device_info: user_agent,
-    ...user.dataValues,
-  });
 
   const userWithoutPrivateDetails = {
     id: user.id,
@@ -66,12 +64,6 @@ const signIn = async ({
     last_name: user.last_name,
     email_id: user.email_id,
     mobile_no: user.mobile_no,
-    account_id: user.account_id,
-    image_id: user.image_id,
-    status: user.status,
-    created_at: user.created_at,
-    updated_at: user.updated_at,
-    session,
   };
 
   return userWithoutPrivateDetails;
@@ -84,7 +76,6 @@ const signIn = async ({
  */
 const addOne = async ({
   first_name, last_name, email_id, mobile_no, account_id, image_id, password,
-  user_agent, app_version,
 }) => {
   const salt = bcrypt.genSaltSync(SALT_ROUNDS);
   const hash = bcrypt.hashSync(password, salt);
@@ -100,13 +91,6 @@ const addOne = async ({
     image_id,
   });
 
-  const session = await sign({
-    app_version,
-    user_type: USER_TYPE.USER,
-    device_info: user_agent,
-    ...user.dataValues,
-  });
-
   const userWithoutPrivateDetails = {
     id: user.id,
     first_name: user.first_name,
@@ -114,31 +98,49 @@ const addOne = async ({
     email_id: user.email_id,
     mobile_no: user.mobile_no,
     account_id: user.account_id,
-    image_id: user.image_id,
-    status: user.status,
-    created_at: user.created_at,
-    updated_at: user.updated_at,
-    session,
   };
   return userWithoutPrivateDetails;
 };
 
-// const getDetails = async ({ user_id }) => {
+const signOut = async ({ account_id, user_id, session_id }) => deleteSession({
+  account_id,
+  session_id,
+  user_id,
+  user_type: USER_TYPE.USER,
+});
 
-// };
 
-// const changePassword = async ({ user_id, old_password, new_password }) => {
+const getDetails = async ({ account_id, user_id }) => {
+  const user = await UserModel.findOne({
+    where: {
+      account_id,
+      id: user_id,
+    },
+  });
 
-// };
+  if (!user) {
+    errorUtils.throwNotFoundError('User not found');
+  }
+
+  return {
+    id: user.id,
+    first_name: user.first_name,
+    last_name: user.last_name,
+    email_id: user.email_id,
+    mobile_no: user.mobile_no,
+    account_id: user.account_id,
+  };
+};
 
 // const resetPassword = async ({ mobile_no, password }) => {
 
 // };
 
-const getOne = async ({ id }) => {
+const getOne = async ({ account_id, id }) => {
   const user = await UserModel.findOne({
     where: {
       id,
+      account_id,
     },
   });
   console.info(`User = ${JSON.stringify(user)}`);
@@ -151,8 +153,52 @@ const getOne = async ({ id }) => {
   return user;
 };
 
+const changePassword = async ({
+  account_id, user_id, old_password, new_password,
+}) => {
+  const user = await getOne({ account_id, id: user_id });
+
+  const result = bcrypt.compareSync(old_password, user.hash);
+
+  if (!result) {
+    return errorUtils.throwForbiddenError('Invalid old password');
+  }
+
+  const salt = bcrypt.genSaltSync(SALT_ROUNDS);
+  const hash = bcrypt.hashSync(new_password, salt);
+  user.salt = salt;
+  user.hash = hash;
+  await user.save();
+  return getDetails({ account_id, user_id });
+};
+
+const updateDetails = async ({
+  account_id, user_id, first_name, last_name,
+}) => {
+  const user = await UserModel.findOne({
+    where: {
+      account_id,
+      id: user_id,
+    },
+  });
+
+  if (!user) {
+    errorUtils.throwNotFoundError('User not found');
+  }
+
+  user.first_name = first_name === undefined ? user.first_name : first_name;
+  user.last_name = last_name === undefined ? user.last_name : last_name;
+
+  await user.save();
+
+  return getDetails({ account_id, user_id });
+};
+
 module.exports = {
   signIn,
   addOne,
   getOne,
+  signOut,
+  changePassword,
+  updateDetails,
 };

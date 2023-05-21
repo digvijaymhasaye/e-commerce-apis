@@ -50,10 +50,13 @@ const getOne = async (req, res, next) => {
 
 const addOne = async (req, res, next) => {
   const reqBody = req.body;
+  const reqFile = req.file;
   try {
     const validatedReqData = await addProductValidation.validate(reqBody);
     const product = await productService.addOne({
       account_id: req.headers.account_id,
+      file: reqFile,
+      user_id: req.headers.user_id,
       ...validatedReqData,
     });
     return successUtils.handler({ product }, req, res);
@@ -67,12 +70,15 @@ const updateOne = async (req, res, next) => {
   const { productId } = req.params;
   const { enable } = req.query;
   const reqBody = req.body;
+  const reqFile = req.file;
   try {
     const id = await getId.validate(productId);
     const validatedReqData = await updateProductValidation.validate({ enable, ...reqBody });
     const product = await productService.updateOne({
       id,
       account_id: req.headers.account_id,
+      user_id: req.headers.user_id,
+      file: reqFile,
       ...validatedReqData,
     });
     return successUtils.handler({ product }, req, res);

@@ -49,11 +49,15 @@ const getOne = async (req, res, next) => {
 };
 
 const addOne = async (req, res, next) => {
+  console.log('Category controller');
   const reqBody = req.body;
+  const reqFile = req.file;
   try {
     const validatedReqData = await addCategoryValidation.validate(reqBody);
     const category = await categoryService.addOne({
       account_id: req.headers.account_id,
+      user_id: req.headers.user_id,
+      image: reqFile,
       ...validatedReqData,
     });
     return successUtils.handler({ category }, req, res);
@@ -67,12 +71,15 @@ const updateOne = async (req, res, next) => {
   const { categoryId } = req.params;
   const { enable } = req.query;
   const reqBody = req.body;
+  const reqFile = req.file;
   try {
     const id = await getId.validate(categoryId);
     const validatedReqData = await updateCategoryValidation.validate({ enable, ...reqBody });
     const category = await categoryService.updateOne({
       id,
       account_id: req.headers.account_id,
+      user_id: req.headers.user_id,
+      image: reqFile,
       ...validatedReqData,
     });
     return successUtils.handler({ category }, req, res);

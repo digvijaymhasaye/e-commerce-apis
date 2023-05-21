@@ -8,7 +8,7 @@ module.exports = Joi.object()
       .label('Price'),
     base_quantity: Joi.number().integer().default(0).label('Quantity'),
     quantity: Joi.number().integer().default(0).label('Quantity'),
-    unit: Joi.string().valid('dozens', 'packets').label('Unit'),
+    unit: Joi.string().valid('kg', 'dozens', 'packets').label('Unit'),
     category_id: Joi.number().integer().positive().label('Category Id'),
     enable: Joi.boolean().label('Enable'),
     image_id: Joi.number().integer().positive(),
