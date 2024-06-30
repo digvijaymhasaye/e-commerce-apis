@@ -718,7 +718,9 @@ paths:
       summary: Your GET endpoint
       tags:
         - OTP
-      responses: {}
+      responses:
+        '200':
+          description: OK
       operationId: get-otp-mobiles-mobileNo-send
   '/otp/mobiles/{mobileNo}/resend':
     parameters:
